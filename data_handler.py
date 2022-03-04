@@ -6,12 +6,19 @@ import pandas as pd
 import geopandas as gpd
 
 def pull_data ():
+    '''
+    Function pulls data from Ontario Data Catalogue and reads misc data files
+    '''
 
-    match = pd.read_csv("./Shapefiles/phu-id-match.csv")
-    ont_map = gpd.read_file("./Shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
     data_dict = pull_data_from_api()
 
-    return match, ont_map, data_dict
+    phu_match = pd.read_csv("./Shapefiles/phu-id-match.csv")
+    ont_map = gpd.read_file("./Shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
+
+    data_dict['ont_map'] = ont_map
+    data_dict['phu_match'] = phu_match
+
+    return data_dict
 
 def pull_data_from_api ():
     '''
