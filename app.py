@@ -4,31 +4,29 @@
 from dash import Dash, html, dcc
 import plotly.express as px
 
-#import contextily as cx
-import geopandas as gpd
 import pandas as pd
+
+from data_handler import pull_data
 
 app = Dash(__name__)
 
 now = pd.Timestamp.now()
 
-cases = pd.read_csv("https://data.ontario.ca/dataset/f4f86e54-872d-43f8-8a86-3892fd3cb5e6/resource/ed270bb8-340b-41f9-a7c6-e8ef587e6d11/download/covidtesting.csv")
+match, ont_map, data_dict = pull_data()
+assert data_dict is not None
+
+cases = data_dict['cases_tl']
 cases['Reported Date'] = pd.to_datetime(cases['Reported Date'], format='%Y-%m-%d')
 view = cases[cases['Reported Date'] > now - pd.Timedelta(days=90)]
-
 
 fig_hosp = px.line(view, x="Reported Date", y="Number of patients hospitalized with COVID-19", title='Hospitalizations')
 fig_tot_case = px.line(view, x="Reported Date", y="Total Cases", title='Total Cases')
 fig_tot_deatb = px.line(view, x="Reported Date", y="Deaths", title='Deaths')
 
-phu_cases = pd.read_csv("https://data.ontario.ca/dataset/1115d5fe-dd84-4c69-b5ed-05bf0c0a0ff9/resource/d1bfe1ad-6575-4352-8302-09ca81f7ddfc/download/cases_by_status_and_phu.csv")
+phu_cases = data_dict['cases_phu']
 phu_cases['FILE_DATE'] = pd.to_datetime(phu_cases['FILE_DATE'], format='%Y-%m-%d')
 
 phu_view = phu_cases[phu_cases['FILE_DATE'] == max(phu_cases['FILE_DATE'])]
-
-match = pd.read_csv("./Shapefiles/phu-id-match.csv")
-
-ont_map = gpd.read_file("./Shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
 
 merged_ont_map = pd.merge(match, phu_view, how="left", left_on="PHU_ID", right_on="PHU_NUM") 
 ont_map['Cases'] = merged_ont_map['ACTIVE_CASES']
@@ -50,7 +48,6 @@ fig_ont_map.update_layout(
     title=dict(x=0.5),
     title_text='Active Cases by PHU',
     margin={"r":0,"t":30,"l":0,"b":10},
-    coloraxis_showscale=False,
     dragmode=False)
 
 
