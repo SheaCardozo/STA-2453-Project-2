@@ -29,33 +29,64 @@ def create_maps (data_dict: dict, fig_dict: dict):
     phu_cases = data_dict['cases_phu']
     phu_cases['FILE_DATE'] = pd.to_datetime(phu_cases['FILE_DATE'], format='%Y-%m-%d')
 
-    phu_view = phu_cases[phu_cases['FILE_DATE'] == max(phu_cases['FILE_DATE'])]
+    
+    phu_tests = data_dict['tests_phu']
+    phu_tests['DATE'] = pd.to_datetime(phu_tests['DATE'], format='%Y-%m-%d')
+
+    tests_view = phu_tests[phu_tests['DATE'] == max(phu_tests['DATE'])]
+    cases_view = phu_cases[phu_cases['FILE_DATE'] == max(phu_cases['FILE_DATE'])]
+
 
     ont_map = data_dict['ont_map']
 
-    merged_phu_view = pd.merge(data_dict['phu_match'], phu_view, how="left", left_on="PHU_ID", right_on="PHU_NUM") 
+    merged_cases_view = pd.merge(data_dict['phu_match'], cases_view, how="left", left_on="PHU_ID", right_on="PHU_NUM") 
+    merged_tests_view = pd.merge(data_dict['phu_match'], tests_view, how="left", left_on="PHU_ID", right_on="PHU_num") 
 
-    ont_map['Cases'] = merged_phu_view['ACTIVE_CASES']
-    ont_map['PHU'] = merged_phu_view['NAME_ENG']
+
+    ont_map['Cases'] = merged_cases_view['ACTIVE_CASES']
+    ont_map['PHU'] = merged_cases_view['NAME_ENG']
+    ont_map['Test Positive Rate'] = merged_tests_view['percent_positive_7d_avg']
     ont_map['id'] = ont_map.index
 
     ont_map = ont_map.to_crs(epsg=4326)
 
-    map_ont_hosp = px.choropleth(ont_map, geojson=ont_map.geometry, 
+    map_ont_ac = px.choropleth(ont_map, geojson=ont_map.geometry, 
                         locations="id", color="Cases", 
                         hover_data={'PHU':True, 'Cases':True, 'id':False},
                         fitbounds="locations",
                         height=750,
                         color_continuous_scale="Viridis")
 
-    map_ont_hosp.update_geos(resolution=110)
+    map_ont_ac.update_geos(resolution=110)
 
-    map_ont_hosp.update_layout(
+    map_ont_ac.update_layout(
         title=dict(x=0.5),
         title_text='Active Cases by PHU',
         margin={"r":0,"t":30,"l":0,"b":10},
+        coloraxis={"colorbar":{"title":{"text":""}},
+                   "showscale": False},
         dragmode=False)
 
-    fig_dict['map_ont_hosp'] = map_ont_hosp
+
+    map_ont_test = px.choropleth(ont_map, geojson=ont_map.geometry, 
+                        locations="id", color="Test Positive Rate", 
+                        hover_data={'PHU':True, 'Test Positive Rate':True, 'id':False},
+                        fitbounds="locations",
+                        height=750,
+                        color_continuous_scale="Viridis")
+
+    map_ont_test.update_geos(resolution=110)
+
+    map_ont_test.update_layout(
+        title=dict(x=0.5),
+        title_text='Tests Positive Rate by PHU',
+        margin={"r":0,"t":30,"l":0,"b":10},
+        coloraxis={"colorbar":{"title":{"text":""}},
+                   "showscale": False},
+        dragmode=False)
+
+    fig_dict['map_ont_ac'] = map_ont_ac
+    fig_dict['map_ont_test'] = map_ont_test
+
 
     return fig_dict
