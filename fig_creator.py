@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+import numpy as np
 
 def create_fig_dict (data_dict: dict):
     '''
@@ -19,6 +20,33 @@ def create_fig_dict (data_dict: dict):
     fig_dict['fig_hosp_time'] = fig_hosp_time
     fig_dict['fig_totcase_time'] = fig_totcase_time
     fig_dict['fig_totdeath_time'] = fig_totdeath_time
+
+    cases2 = data_dict['cases_vaxed']
+    cases2['Date'] = pd.to_datetime(cases2['Date'], format='%Y-%m-%d')
+    cases2['Tot Cases'] = cases2['covid19_cases_unvac'] + cases2['covid19_cases_partial_vac'] + cases2['covid19_cases_full_vac'] + cases2['covid19_cases_vac_unknown']
+    view2 = cases2[cases2['Date'] > now - pd.Timedelta(days=90)]
+
+    fig_plot_time = px.line(view2, x="Date", y="Tot Cases",
+                            title='Cases per day')
+
+    cases3 = data_dict['vax_stat']
+    cases3['Date'] = pd.to_datetime(cases3['report_date'], format='%Y-%m-%d')
+    cases3['Tot Vaxed'] = cases3['total_individuals_fully_vaccinated']
+    cases3['part Vaxed'] = cases3['total_individuals_at_least_one']
+    cases3['UnVaxed'] = 14170000 - cases3['total_individuals_at_least_one']
+    view3 = cases3[cases3['Date'] > now - pd.Timedelta(days=90)]
+
+    view4 = pd.merge(view3, view2, on=['Date'])
+    view4['ratio'] = (view4['covid19_cases_full_vac']/view4['Tot Vaxed'])/(view4['covid19_cases_unvac']/view4['UnVaxed'])
+
+    df = pd.DataFrame(data={'Vax Status': ['Fully Vaccinated', 'Partially Vaccinated', 'Unvaccinated'], 'values': [np.mean(view4['covid19_cases_full_vac']/view4['Tot Vaxed']), np.mean(view4['covid19_cases_partial_vac']/view4['part Vaxed']), np.mean(view4['covid19_cases_unvac']/view4['UnVaxed'])]})
+    fig = px.pie(df, values='values', names='Vax Status', title='Vaccination Status of Covid Cases on average')
+    fig_vax_ratio_time = px.line(view4, x="Date", y="ratio",
+                            title='Ratio of Fully Vaxed cases to UnVaxed cases')
+
+    fig_dict['fig_plot_time'] = fig_plot_time
+    fig_dict['fig_vax_ratio_time'] = fig_vax_ratio_time
+    fig_dict['fig_vax_time'] = fig
 
     fig_dict = create_maps(data_dict, fig_dict)
 

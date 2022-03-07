@@ -24,6 +24,7 @@ app.layout = dbc.Container([
             [
                 dbc.Tab(label="Active Cases", tab_id="map_ont_ac"),
                 dbc.Tab(label="Positive Test Rate", tab_id="map_ont_test"),
+                dbc.Tab(label="Plot", tab_id="cases"),
             ],
             id="tabs",
             active_tab="map_ont_ac",
@@ -41,11 +42,28 @@ def render_tab_content(active_tab, data):
     stored graphs, and renders the tab content depending on what the value of
     'active_tab' is.
     """
-
     if data is None:
         data = {}
 
     if active_tab is not None:
+        if active_tab == 'cases':
+            if 'fig_plot_time' not in data:
+                data['fig_plot_time'] = fig_dict['fig_plot_time']
+            if 'fig_vax_time' not in data:
+                data['fig_vax_time'] = fig_dict['fig_vax_time']
+            if 'fig_vax_ratio_time' not in data:
+                data['fig_vax_ratio_time'] = fig_dict['fig_vax_ratio_time']
+
+            return html.Div(children=[
+                dcc.Graph(id=active_tab,
+                          figure=data['fig_plot_time'],
+                          config={"displayModeBar": False}),
+                dcc.Graph(id=active_tab,
+                          figure=data['fig_vax_ratio_time'],
+                          config={"displayModeBar": False}),
+                dcc.Graph(id=active_tab,
+                          figure=data['fig_vax_time'],
+                          config={"displayModeBar": False})]), data
         if active_tab not in data:
             data[active_tab] = fig_dict[active_tab]
         return dcc.Graph(id=active_tab,

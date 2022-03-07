@@ -5,7 +5,8 @@ import json
 import pandas as pd
 import geopandas as gpd
 
-def pull_data ():
+
+def pull_data():
     '''
     Function pulls data from Ontario Data Catalogue and reads misc data files
     '''
@@ -22,13 +23,17 @@ def pull_data ():
 
     return data_dict
 
-def pull_data_from_api ():
+
+def pull_data_from_api():
     '''
     Function pulls data from Ontario Data Catalogue, returns None if failure.
     '''
-    key_dict = {"cases_tl":"https://data.ontario.ca/api/3/action/datastore_search?resource_id=ed270bb8-340b-41f9-a7c6-e8ef587e6d11&limit=1000000", 
-                "cases_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=d1bfe1ad-6575-4352-8302-09ca81f7ddfc&limit=1000000",
-                "tests_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=07bc0e21-26b5-4152-b609-c1958cb7b227&limit=1000000"}
+    key_dict = {
+        "cases_tl": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=ed270bb8-340b-41f9-a7c6-e8ef587e6d11&limit=1000000",
+        "cases_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=d1bfe1ad-6575-4352-8302-09ca81f7ddfc&limit=1000000",
+        "cases_vaxed": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=eed63cf2-83dd-4598-b337-b288c0a89a16&limit=1000000",
+        "vax_stat": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=8a89caa9-511c-4568-af89-7f2174b4378c&limit=1000000",
+        "tests_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=07bc0e21-26b5-4152-b609-c1958cb7b227&limit=1000000"}
 
     data_dict = {}
 
