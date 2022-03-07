@@ -15,8 +15,8 @@ def pull_data():
 
     assert data_dict is not None
 
-    phu_match = pd.read_csv("./Shapefiles/phu-id-match.csv")
-    ont_map = gpd.read_file("./Shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
+    phu_match = pd.read_csv("./shapefiles/phu-id-match.csv")
+    ont_map = gpd.read_file("./shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
 
     data_dict['ont_map'] = ont_map
     data_dict['phu_match'] = phu_match
