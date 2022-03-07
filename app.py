@@ -8,7 +8,25 @@ from data_handler import pull_data
 from fig_creator import create_fig_dict
 from utils import custom_strftime
 
-app = Dash(external_stylesheets=[dbc.themes.SIMPLEX])
+
+SIDEBAR_STYLE = {
+    "position": "fixed",
+    "top": 0,
+    "left": 0,
+    "bottom": 0,
+    "width": "16rem",
+    "padding": "2rem 1rem",
+    "background-color": "#f8f9fa",
+}
+
+
+CONTENT_STYLE = {
+    "margin-left": "18rem",
+    "margin-right": "2rem",
+    "padding": "2rem 1rem",
+}
+
+app = Dash(external_stylesheets=[dbc.themes.SPACELAB], suppress_callback_exceptions=True)
 
 data_dict = pull_data()
 assert data_dict is not None
@@ -16,15 +34,39 @@ assert data_dict is not None
 now, fig_dict = create_fig_dict(data_dict)
 assert fig_dict is not None
 
-app.layout = dbc.Container([
-    dcc.Store(id="store"),
-    html.H1(f"Today is {custom_strftime('%B {S}, %Y', now)}"),
-    html.Hr(),
+
+sidebar = html.Div(
+    [
+        html.H2("Dashboard"),
+        html.Hr(),
+        html.P(
+            f"{custom_strftime('%B {S}, %Y', now)}", className="lead"
+        ),
+        dbc.Nav(
+            [
+                dbc.NavLink("Main", href="/", active="exact"),
+                dbc.NavLink("Cases", href="/cases", active="exact"),
+                dbc.NavLink("Hospitalizations", href="/hospitalizations", active="exact"),
+                dbc.NavLink("Testing", href="/testing", active="exact"),
+                dbc.NavLink("Vaccinations", href="/vaccinations", active="exact")
+            ],
+            vertical=True,
+            pills=True,
+        ),
+    ],
+    style=SIDEBAR_STYLE,
+)
+
+
+content = html.Div(id="page-content", style=CONTENT_STYLE)
+
+app.layout = html.Div([dcc.Location(id="url"), dcc.Store(id="store"), sidebar, content])
+
+main_page = dbc.Container([
     dbc.Tabs(
             [
                 dbc.Tab(label="Active Cases", tab_id="map_ont_ac"),
                 dbc.Tab(label="Positive Test Rate", tab_id="map_ont_test"),
-                dbc.Tab(label="Plot", tab_id="cases"),
             ],
             id="tabs",
             active_tab="map_ont_ac",
@@ -32,82 +74,59 @@ app.layout = dbc.Container([
         dbc.Spinner(html.Div(id="tab-content", className="p-4")),
 ])
 
+cases_page = dbc.Container([
+                dcc.Graph(id='fig_plot_time',
+                          figure=fig_dict['fig_plot_time'],
+                          config={"displayModeBar": False}),
+                dcc.Graph(id='fig_vax_ratio_time',
+                          figure=fig_dict['fig_vax_ratio_time'],
+                          config={"displayModeBar": False}),
+                dcc.Graph(id='fig_vax_time',
+                          figure=fig_dict['fig_vax_time'],
+                          config={"displayModeBar": False})])
+
+
+
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def render_page_content(pathname):
+    if pathname == "/":
+        return main_page
+    elif pathname == "/cases":
+        return cases_page
+    elif pathname == "/hospitalizations":
+        return html.P("Hospitalizations Placeholder")
+    elif pathname == "/testing":
+        return html.P("Testing Placeholder")
+    elif pathname == "/vaccinations":
+        return html.P("Vaccination Placeholder")
+    # If the user tries to reach a different page, return a 404 message
+    return dbc.Container(
+        [
+            html.H1("404: Not found", className="text-danger"),
+            html.Hr(),
+            html.P(f"The pathname {pathname} was not recognised..."),
+        ]
+    )
+
+
+
 @app.callback(
-    [Output("tab-content", "children"), Output("store", "data")],
-    [Input("tabs", "active_tab"), Input("store", "data")]
+    Output("tab-content", "children"),
+    Input("tabs", "active_tab")
 )
-def render_tab_content(active_tab, data):
+def render_tab_content(active_tab):
     """
     This callback takes the 'active_tab' property as input, as well as the
     stored graphs, and renders the tab content depending on what the value of
     'active_tab' is.
     """
-    if data is None:
-        data = {}
 
     if active_tab is not None:
-        if active_tab == 'cases':
-            if 'fig_plot_time' not in data:
-                data['fig_plot_time'] = fig_dict['fig_plot_time']
-            if 'fig_vax_time' not in data:
-                data['fig_vax_time'] = fig_dict['fig_vax_time']
-            if 'fig_vax_ratio_time' not in data:
-                data['fig_vax_ratio_time'] = fig_dict['fig_vax_ratio_time']
-
-            return html.Div(children=[
-                dcc.Graph(id=active_tab,
-                          figure=data['fig_plot_time'],
-                          config={"displayModeBar": False}),
-                dcc.Graph(id=active_tab,
-                          figure=data['fig_vax_ratio_time'],
-                          config={"displayModeBar": False}),
-                dcc.Graph(id=active_tab,
-                          figure=data['fig_vax_time'],
-                          config={"displayModeBar": False})]), data
-        if active_tab not in data:
-            data[active_tab] = fig_dict[active_tab]
         return dcc.Graph(id=active_tab,
-                         figure=data[active_tab],
-                         config={"displayModeBar": False}), data
+                         figure=fig_dict[active_tab],
+                         config={"displayModeBar": False})
 
+    return "No tab selected"
 
-    return "No tab selected", data
-
-
-'''html.Div(children=[
-    html.H1(children=now.strftime("%d %B %Y")),
-
-    html.Div(children=
-       # Dash Test
-    ),
-
-    dcc.Graph(
-        id='fig_hosp_time',
-        figure=fig_dict['fig_hosp_time']
-    ),
-
-    dcc.Graph(
-        id='fig_totcase_time',
-        figure=fig_dict['fig_totcase_time']
-    ),
-
-    dcc.Graph(
-        id='fig_totdeath_time',
-        figure=fig_dict['fig_totdeath_time']
-    ),
-
-    dcc.Graph(
-        id='map_ont_hosp',
-        figure=fig_dict['map_ont_ac'],
-        config={"displayModeBar": False}
-    ),
-
-    dcc.Graph(
-        id='map_ont_test',
-        figure=fig_dict['map_ont_test'],
-        config={"displayModeBar": False}
-    )
-])
-'''
 if __name__ == '__main__':
     app.run_server(debug=True)
