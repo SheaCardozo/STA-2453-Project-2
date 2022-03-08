@@ -10,7 +10,6 @@ def create_fig_dict (data_dict: dict):
     now = pd.Timestamp.now()
 
     cases = data_dict['cases_tl']
-    cases['Reported Date'] = pd.to_datetime(cases['Reported Date'], format='%Y-%m-%d')
     view = cases[cases['Reported Date'] > now - pd.Timedelta(days=90)]
 
     fig_hosp_time = px.line(view, x="Reported Date", y="Number of patients hospitalized with COVID-19", title='Hospitalizations')
@@ -22,18 +21,12 @@ def create_fig_dict (data_dict: dict):
     fig_dict['fig_totdeath_time'] = fig_totdeath_time
 
     cases2 = data_dict['cases_vaxed']
-    cases2['Date'] = pd.to_datetime(cases2['Date'], format='%Y-%m-%d')
-    cases2['Tot Cases'] = cases2['covid19_cases_unvac'] + cases2['covid19_cases_partial_vac'] + cases2['covid19_cases_full_vac'] + cases2['covid19_cases_vac_unknown']
     view2 = cases2[cases2['Date'] > now - pd.Timedelta(days=90)]
 
     fig_plot_time = px.line(view2, x="Date", y="Tot Cases",
                             title='Cases per day')
 
     cases3 = data_dict['vax_stat']
-    cases3['Date'] = pd.to_datetime(cases3['report_date'], format='%Y-%m-%d')
-    cases3['Tot Vaxed'] = cases3['total_individuals_fully_vaccinated']
-    cases3['part Vaxed'] = cases3['total_individuals_at_least_one']
-    cases3['UnVaxed'] = 14170000 - cases3['total_individuals_at_least_one']
     view3 = cases3[cases3['Date'] > now - pd.Timedelta(days=90)]
 
     view4 = pd.merge(view3, view2, on=['Date'])
@@ -55,21 +48,15 @@ def create_fig_dict (data_dict: dict):
 def create_maps (data_dict: dict, fig_dict: dict):
 
     phu_cases = data_dict['cases_phu']
-    phu_cases['FILE_DATE'] = pd.to_datetime(phu_cases['FILE_DATE'], format='%Y-%m-%d')
-
-    
     phu_tests = data_dict['tests_phu']
-    phu_tests['DATE'] = pd.to_datetime(phu_tests['DATE'], format='%Y-%m-%d')
 
     tests_view = phu_tests[phu_tests['DATE'] == max(phu_tests['DATE'])]
     cases_view = phu_cases[phu_cases['FILE_DATE'] == max(phu_cases['FILE_DATE'])]
-
 
     ont_map = data_dict['ont_map']
 
     merged_cases_view = pd.merge(data_dict['phu_match'], cases_view, how="left", left_on="PHU_ID", right_on="PHU_NUM") 
     merged_tests_view = pd.merge(data_dict['phu_match'], tests_view, how="left", left_on="PHU_ID", right_on="PHU_num") 
-
 
     ont_map['Cases'] = merged_cases_view['ACTIVE_CASES']
     ont_map['PHU'] = merged_cases_view['NAME_ENG']

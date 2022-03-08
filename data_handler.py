@@ -92,4 +92,18 @@ def data_transforms (data_dict):
 
     data_dict['hosp_vax']['total'] = data_dict['hosp_vax']['icu'] + data_dict['hosp_vax']['nonicu']
 
+    data_dict['cases_tl']['Reported Date'] = pd.to_datetime(data_dict['cases_tl']['Reported Date'], format='%Y-%m-%d')
+    data_dict['cases_vaxed']['Date'] = pd.to_datetime(data_dict['cases_vaxed']['Date'], format='%Y-%m-%d')
+
+    data_dict['cases_vaxed']['Tot Cases'] = data_dict['cases_vaxed']['covid19_cases_unvac'] + data_dict['cases_vaxed']['covid19_cases_partial_vac'] +\
+                                            data_dict['cases_vaxed']['covid19_cases_full_vac'] + data_dict['cases_vaxed']['covid19_cases_vac_unknown']
+
+    data_dict['vax_stat']['Date'] = pd.to_datetime(data_dict['vax_stat']['report_date'], format='%Y-%m-%d')
+    data_dict['vax_stat']['Tot Vaxed'] = data_dict['vax_stat']['total_individuals_fully_vaccinated']
+    data_dict['vax_stat']['part Vaxed'] = data_dict['vax_stat']['total_individuals_at_least_one']
+    data_dict['vax_stat']['UnVaxed'] = 14170000 - data_dict['vax_stat']['total_individuals_at_least_one']
+
+    data_dict['cases_phu']['FILE_DATE'] = pd.to_datetime(data_dict['cases_phu']['FILE_DATE'], format='%Y-%m-%d')
+    data_dict['tests_phu']['DATE'] = pd.to_datetime(data_dict['tests_phu']['DATE'], format='%Y-%m-%d')
+
     return data_dict
