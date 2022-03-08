@@ -37,9 +37,9 @@ def pull_data():
 
 
     phu_match = pd.read_csv("./shapefiles/phu-id-match.csv")
-    ont_map = gpd.read_file("./shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
+    phu_map = gpd.read_file("./shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
 
-    data_dict['ont_map'] = ont_map
+    data_dict['phu_map'] = phu_map
     data_dict['phu_match'] = phu_match
 
     data_dict = data_transforms(data_dict)
@@ -90,13 +90,20 @@ def data_transforms (data_dict):
                                      data_dict['hosp_vax']['hospitalnonicu_partial_vac'] +\
                                      data_dict['hosp_vax']['hospitalnonicu_full_vac'] 
 
+    data_dict['hosp_vax']['date'] = pd.to_datetime(data_dict['hosp_vax']['date'], format='%Y-%m-%d')
+    data_dict['hosp_vax']['tot_unvac'] = data_dict['hosp_vax']['hospitalnonicu_unvac'] + data_dict['hosp_vax']['icu_unvac']
+    data_dict['hosp_vax']['tot_partial_vac'] = data_dict['hosp_vax']['hospitalnonicu_partial_vac'] + data_dict['hosp_vax']['icu_partial_vac']
+    data_dict['hosp_vax']['tot_full_vac'] = data_dict['hosp_vax']['hospitalnonicu_full_vac'] + data_dict['hosp_vax']['icu_full_vac']
+
     data_dict['hosp_vax']['total'] = data_dict['hosp_vax']['icu'] + data_dict['hosp_vax']['nonicu']
+
 
     data_dict['cases_tl']['Reported Date'] = pd.to_datetime(data_dict['cases_tl']['Reported Date'], format='%Y-%m-%d')
     data_dict['cases_vaxed']['Date'] = pd.to_datetime(data_dict['cases_vaxed']['Date'], format='%Y-%m-%d')
 
     data_dict['cases_vaxed']['Tot Cases'] = data_dict['cases_vaxed']['covid19_cases_unvac'] + data_dict['cases_vaxed']['covid19_cases_partial_vac'] +\
                                             data_dict['cases_vaxed']['covid19_cases_full_vac'] + data_dict['cases_vaxed']['covid19_cases_vac_unknown']
+
 
     data_dict['vax_stat']['Date'] = pd.to_datetime(data_dict['vax_stat']['report_date'], format='%Y-%m-%d')
     data_dict['vax_stat']['Tot Vaxed'] = data_dict['vax_stat']['total_individuals_fully_vaccinated']

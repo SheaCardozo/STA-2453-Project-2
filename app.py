@@ -36,7 +36,9 @@ assert fig_dict is not None
 
 sidebar = html.Div(
     [
-        html.H2("Dashboard"),
+        html.H2("Ontario", style={"margin": "0px"}),
+        html.H2("COVID-19", style={"margin": "0px"}),
+        html.H2("Dashboard", style={"margin": "0px"}),
         html.Hr(),
         html.P(
             f"{custom_strftime('%B {S}, %Y', now)}", className="lead"
@@ -89,14 +91,39 @@ vaccine_page = dbc.Container([
 
 hosp_page = dbc.Container([
                 dbc.Row([
-                    dbc.Col(html.H2("Hospital Admissions"), width='auto'), 
+                    dbc.Col(html.H2("COVID-19 Hospital Admissions"), width='auto'), 
                     ]),
                 html.Hr(),
                 dbc.Row([
                     dbc.Col(change_card(data=data_dict['hosp_vax'], col='total', date_col='date', title="Total", color_invert=True), width='auto'), 
                     dbc.Col(change_card(data=data_dict['hosp_vax'], col='icu', date_col='date', title="ICU", color_invert=True), width='auto'),
                     dbc.Col(change_card(data=data_dict['hosp_vax'], col='nonicu', date_col='date', title="Non-ICU", color_invert=True), width='auto')
-                    ])])
+                    ]),
+                dbc.Row([
+                    dbc.Col(html.H2("Hospitalizations Over Time", style={"margin-top": "32px"}), width='auto'), 
+                ]),
+                html.Hr(),
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id='fig_hosp_area',
+                            figure=fig_dict['fig_hosp_area'],
+                            config={"displayModeBar": False}), width=12)
+                    ]),
+                dbc.Row([
+                    dbc.Col(html.H2("Hospitalizations by Vaccine Status", style={"margin-top": "32px"}), width='auto'), 
+                ]),
+                html.Hr(),
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id='fig_hosp_vax_tot',
+                            figure=fig_dict['fig_hosp_vax_tot'],
+                            config={"displayModeBar": False}), width=4), 
+                    dbc.Col(dcc.Graph(id='fig_hosp_vax_icu',
+                            figure=fig_dict['fig_hosp_vax_icu'],
+                            config={"displayModeBar": False}), width=4),
+                    dbc.Col(dcc.Graph(id='fig_hosp_vax_nonicu',
+                            figure=fig_dict['fig_hosp_vax_nonicu'],
+                            config={"displayModeBar": False}), width=4),
+                ]),
+            ])
 
 
 
@@ -140,7 +167,6 @@ def render_tab_content(active_tab):
                          config={"displayModeBar": False})
 
     return "No tab selected"
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
