@@ -107,8 +107,9 @@ def data_transforms (data_dict):
 
     data_dict['vax_stat']['Date'] = pd.to_datetime(data_dict['vax_stat']['report_date'], format='%Y-%m-%d')
     data_dict['vax_stat']['Tot Vaxed'] = data_dict['vax_stat']['total_individuals_fully_vaccinated']
-    data_dict['vax_stat']['part Vaxed'] = data_dict['vax_stat']['total_individuals_at_least_one']
-    data_dict['vax_stat']['UnVaxed'] = 14170000 - data_dict['vax_stat']['total_individuals_at_least_one']
+    data_dict['vax_stat']['part Vaxed'] = data_dict['vax_stat']['total_individuals_partially_vaccinated']
+    data_dict['vax_stat']['UnVaxed'] = 14826276 - data_dict['vax_stat']['total_individuals_at_least_one']
+    data_dict['vax_stat']['UnVaxed12o'] = 13038032 - data_dict['vax_stat']['total_individuals_at_least_one']
 
     data_dict['cases_phu']['FILE_DATE'] = pd.to_datetime(data_dict['cases_phu']['FILE_DATE'], format='%Y-%m-%d')
     data_dict['tests_phu']['DATE'] = pd.to_datetime(data_dict['tests_phu']['DATE'], format='%Y-%m-%d')

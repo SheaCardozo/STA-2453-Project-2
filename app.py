@@ -113,6 +113,11 @@ hosp_page = dbc.Container([
                 ]),
                 html.Hr(),
                 dbc.Row([
+                    dbc.Col(dcc.Graph(id='fig_hosp_general_pop',
+                            figure=fig_dict['fig_hosp_general_pop'],
+                            config={"displayModeBar": False}), width=4, align='end'), 
+                ], justify='center'),
+                dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_tot',
                             figure=fig_dict['fig_hosp_vax_tot'],
                             config={"displayModeBar": False}), width=4), 

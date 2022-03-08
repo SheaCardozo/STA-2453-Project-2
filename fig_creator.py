@@ -43,8 +43,13 @@ def create_fig_dict (data_dict: dict):
     fig_dict['fig_vax_time'] = fig
 
 
-    # Hospitilization Pie Charts
+    # Hospitalization Pie Charts
     hosp_vax_view = data_dict['hosp_vax'][data_dict['hosp_vax']['date'] == max(data_dict['hosp_vax']['date'])]
+    hosp_vax_stat_view = data_dict['vax_stat'][data_dict['vax_stat']['report_date'] == max(data_dict['vax_stat']['report_date'])]
+
+    hosp_vax_stat_tot_view = hosp_vax_stat_view[['UnVaxed12o','part Vaxed','Tot Vaxed']].T
+    hosp_vax_stat_tot_view = hosp_vax_stat_tot_view.rename(columns={hosp_vax_stat_tot_view.columns[0]: "Number"})
+    hosp_vax_stat_tot_view["Vaccination Status"] = ["Unvaccinated", "Partially Vaccinated", "Fully Vaccinated"]
 
     hosp_vax_tot_view = hosp_vax_view[['tot_unvac','tot_partial_vac','tot_full_vac']].T
     hosp_vax_tot_view = hosp_vax_tot_view.rename(columns={ hosp_vax_tot_view.columns[0]: "Hospitalizations" })
@@ -61,12 +66,16 @@ def create_fig_dict (data_dict: dict):
     fig_hosp_vax_tot = px.pie(hosp_vax_tot_view, values="Hospitalizations", names="Vaccination Status", title='Total Hospitalizations by Vaccination Status')
     fig_hosp_vax_icu = px.pie(hosp_vax_icu_view, values="Hospitalizations", names="Vaccination Status", title='ICU Hospitalizations by Vaccination Status')
     fig_hosp_vax_nonicu = px.pie(hosp_vax_nonicu_view, values="Hospitalizations", names="Vaccination Status", title='Non-ICU Hospitalizations by Vaccination Status')
+    fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Number", names="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270)
+
+    fig_hosp_general_pop.update_layout(margin=dict(b=0))
 
     fig_dict['fig_hosp_vax_tot'] = fig_hosp_vax_tot
     fig_dict['fig_hosp_vax_icu'] = fig_hosp_vax_icu
     fig_dict['fig_hosp_vax_nonicu'] = fig_hosp_vax_nonicu
+    fig_dict['fig_hosp_general_pop'] = fig_hosp_general_pop
 
-    # Hospitilization Area Charts
+    # Hospitalization Area Charts
     hosp_area_view = data_dict['hosp_vax'][data_dict['hosp_vax']['date'] > now - pd.Timedelta(days=180)]
 
     hosp_area_view_icu = pd.DataFrame(data={"Date": hosp_area_view['date']}, columns=['Date'])
