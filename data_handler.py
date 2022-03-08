@@ -42,6 +42,8 @@ def pull_data():
     data_dict['ont_map'] = ont_map
     data_dict['phu_match'] = phu_match
 
+    data_dict = data_transforms(data_dict)
+
     return data_dict
 
 
@@ -75,5 +77,19 @@ def pull_data_from_files():
 
     for key, key_url in key_dict.items():
         data_dict[key] = pd.read_csv(f"./data/{key}.csv")
+
+    return data_dict
+
+def data_transforms (data_dict):
+
+    data_dict['hosp_vax']['icu'] = data_dict['hosp_vax']['icu_unvac'] +\
+                                   data_dict['hosp_vax']['icu_partial_vac'] +\
+                                   data_dict['hosp_vax']['icu_full_vac']
+
+    data_dict['hosp_vax']['nonicu'] = data_dict['hosp_vax']['hospitalnonicu_unvac'] +\
+                                     data_dict['hosp_vax']['hospitalnonicu_partial_vac'] +\
+                                     data_dict['hosp_vax']['hospitalnonicu_full_vac'] 
+
+    data_dict['hosp_vax']['total'] = data_dict['hosp_vax']['icu'] + data_dict['hosp_vax']['nonicu']
 
     return data_dict

@@ -87,6 +87,17 @@ vaccine_page = dbc.Container([
                           figure=fig_dict['fig_vax_time'],
                           config={"displayModeBar": False})])
 
+hosp_page = dbc.Container([
+                dbc.Row([
+                    dbc.Col(html.H2("Hospital Admissions"), width='auto'), 
+                    ]),
+                html.Hr(),
+                dbc.Row([
+                    dbc.Col(change_card(data=data_dict['hosp_vax'], col='total', date_col='date', title="Total", color_invert=True), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['hosp_vax'], col='icu', date_col='date', title="ICU", color_invert=True), width='auto'),
+                    dbc.Col(change_card(data=data_dict['hosp_vax'], col='nonicu', date_col='date', title="Non-ICU", color_invert=True), width='auto')
+                    ])])
+
 
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
@@ -96,7 +107,7 @@ def render_page_content(pathname):
     elif pathname == "/cases":
         return cases_page
     elif pathname == "/hospitalizations":
-        return html.P("Hospitalizations Placeholder")
+        return hosp_page
     elif pathname == "/testing":
         return html.P("Testing Placeholder")
     elif pathname == "/vaccinations":
