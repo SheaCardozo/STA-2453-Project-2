@@ -73,7 +73,8 @@ main_page = dbc.Container([
         html.Div(id="tab-content", className="p-4"),
 ])
 
-cases_page = dbc.Container([change_card(data=data_dict['cases_tl'], col='Total Cases', date_col='Reported Date', title="Current Cases", color_invert=True),
+cases_page = dbc.Container([
+                change_card(data=data_dict['cases_tl'], col='Total Cases', date_col='Reported Date', title="Active Cases", color_invert=True),
                 dcc.Graph(id='fig_plot_time',
                           figure=fig_dict['fig_plot_time'],
                           config={"displayModeBar": False}),])

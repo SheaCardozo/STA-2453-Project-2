@@ -29,10 +29,12 @@ def change_card(data, col, date_col, title, color_invert=False):
     if color_invert:
         color_list.reverse()
 
-    if change >= 0:
+    if change > 0:
         asset = f"./assets/{color_list[0]}_up.png"
-    else:
+    elif change < 0:
         asset = f"./assets/{color_list[1]}_up.png"
+    else:
+        asset = f"./assets/neut.png"
 
     return dbc.Card(
     [
