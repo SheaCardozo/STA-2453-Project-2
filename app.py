@@ -6,7 +6,7 @@ import dash_bootstrap_components as dbc
 
 from data_handler import pull_data
 from fig_creator import create_fig_dict
-from utils import custom_strftime
+from utils import custom_strftime, change_card
 
 
 SIDEBAR_STYLE = {
@@ -34,7 +34,6 @@ assert data_dict is not None
 now, fig_dict = create_fig_dict(data_dict)
 assert fig_dict is not None
 
-
 sidebar = html.Div(
     [
         html.H2("Dashboard"),
@@ -60,7 +59,7 @@ sidebar = html.Div(
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), dcc.Store(id="store"), sidebar, content])
+app.layout = html.Div([dcc.Location(id="url"), dcc.Store(id="store"), sidebar, dcc.Loading(id="loading-content", type="default", children=content)])
 
 main_page = dbc.Container([
     dbc.Tabs(
@@ -71,13 +70,15 @@ main_page = dbc.Container([
             id="tabs",
             active_tab="map_ont_ac",
         ),
-        dbc.Spinner(html.Div(id="tab-content", className="p-4")),
+        html.Div(id="tab-content", className="p-4"),
 ])
 
-cases_page = dbc.Container([
+cases_page = dbc.Container([change_card(data=data_dict['cases_tl'], col='Total Cases', date_col='Reported Date', title="Current Cases", color_invert=True),
                 dcc.Graph(id='fig_plot_time',
                           figure=fig_dict['fig_plot_time'],
-                          config={"displayModeBar": False}),
+                          config={"displayModeBar": False}),])
+
+vaccine_page = dbc.Container([
                 dcc.Graph(id='fig_vax_ratio_time',
                           figure=fig_dict['fig_vax_ratio_time'],
                           config={"displayModeBar": False}),
@@ -98,7 +99,7 @@ def render_page_content(pathname):
     elif pathname == "/testing":
         return html.P("Testing Placeholder")
     elif pathname == "/vaccinations":
-        return html.P("Vaccination Placeholder")
+        return vaccine_page
     # If the user tries to reach a different page, return a 404 message
     return dbc.Container(
         [
@@ -127,6 +128,7 @@ def render_tab_content(active_tab):
                          config={"displayModeBar": False})
 
     return "No tab selected"
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
