@@ -130,4 +130,5 @@ dmypy.json
 
 # other
 .idea/
-data/*
+data/*.csv
+data/*.txt
