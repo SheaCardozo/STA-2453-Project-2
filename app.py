@@ -109,7 +109,7 @@ hosp_page = dbc.Container([
                             config={"displayModeBar": False}), width=12)
                     ]),
                 dbc.Row([
-                    dbc.Col(html.H2("Hospitalizations by Vaccine Status", style={"margin-top": "32px"}), width='auto'), 
+                    dbc.Col(html.H2("Vaccination Status of Hospitalizations", style={"margin-top": "32px"}), width='auto'), 
                 ]),
                 html.Hr(),
                 dbc.Row([

@@ -63,9 +63,9 @@ def create_fig_dict (data_dict: dict):
     hosp_vax_nonicu_view = hosp_vax_nonicu_view.rename(columns={ hosp_vax_nonicu_view.columns[0]: "Hospitalizations" })
     hosp_vax_nonicu_view["Vaccination Status"] = ["Unvaccinated", "Partially Vaccinated", "Fully Vaccinated"]
 
-    fig_hosp_vax_tot = px.pie(hosp_vax_tot_view, values="Hospitalizations", names="Vaccination Status", title='Total Hospitalizations by Vaccination Status')
-    fig_hosp_vax_icu = px.pie(hosp_vax_icu_view, values="Hospitalizations", names="Vaccination Status", title='ICU Hospitalizations by Vaccination Status')
-    fig_hosp_vax_nonicu = px.pie(hosp_vax_nonicu_view, values="Hospitalizations", names="Vaccination Status", title='Non-ICU Hospitalizations by Vaccination Status')
+    fig_hosp_vax_tot = px.pie(hosp_vax_tot_view, values="Hospitalizations", names="Vaccination Status", title='Vaccination Status of all Hospitalizations')
+    fig_hosp_vax_icu = px.pie(hosp_vax_icu_view, values="Hospitalizations", names="Vaccination Status", title='Vaccination Status of ICU Hospitalizations')
+    fig_hosp_vax_nonicu = px.pie(hosp_vax_nonicu_view, values="Hospitalizations", names="Vaccination Status", title='Vaccination Status of Non-ICU Hospitalizations')
     fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Number", names="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270)
 
     fig_hosp_general_pop.update_layout(margin=dict(b=0))
