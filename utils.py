@@ -32,7 +32,7 @@ def change_card(data, col, date_col, title, color_invert=False):
     if change > 0:
         asset = f"./assets/{color_list[0]}_up.png"
     elif change < 0:
-        asset = f"./assets/{color_list[1]}_up.png"
+        asset = f"./assets/{color_list[1]}_down.png"
     else:
         asset = f"./assets/neut.png"
 
