@@ -13,6 +13,7 @@ key_dict = {
     "cases_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=d1bfe1ad-6575-4352-8302-09ca81f7ddfc&limit=1000000",
     "cases_vaxed": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=eed63cf2-83dd-4598-b337-b288c0a89a16&limit=1000000",
     "vax_stat": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=8a89caa9-511c-4568-af89-7f2174b4378c&limit=1000000",
+    "vax_age": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=775ca815-5028-4e9b-9dd4-6975ff1be021&limit=1000000",
     "hosp_vax": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=274b819c-5d69-4539-a4db-f2950794138c&limit=1000000",
     "tests_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=07bc0e21-26b5-4152-b609-c1958cb7b227&limit=1000000"}
 
@@ -107,9 +108,11 @@ def data_transforms (data_dict):
 
     data_dict['vax_stat']['Date'] = pd.to_datetime(data_dict['vax_stat']['report_date'], format='%Y-%m-%d')
     data_dict['vax_stat']['Tot Vaxed'] = data_dict['vax_stat']['total_individuals_fully_vaccinated']
-    data_dict['vax_stat']['part Vaxed'] = data_dict['vax_stat']['total_individuals_partially_vaccinated']
+    data_dict['vax_stat']['part Vaxed'] = data_dict['vax_stat']['total_individuals_at_least_one'] - data_dict['vax_stat']['total_individuals_fully_vaccinated']
     data_dict['vax_stat']['UnVaxed'] = 14826276 - data_dict['vax_stat']['total_individuals_at_least_one']
     data_dict['vax_stat']['UnVaxed12o'] = 13038032 - data_dict['vax_stat']['total_individuals_at_least_one']
+
+    data_dict['vax_age']['Date'] = pd.to_datetime(data_dict['vax_age']['Date'])
 
     data_dict['cases_phu']['FILE_DATE'] = pd.to_datetime(data_dict['cases_phu']['FILE_DATE'], format='%Y-%m-%d')
     data_dict['tests_phu']['DATE'] = pd.to_datetime(data_dict['tests_phu']['DATE'], format='%Y-%m-%d')

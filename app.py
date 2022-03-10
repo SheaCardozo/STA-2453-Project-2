@@ -77,17 +77,27 @@ main_page = dbc.Container([
 
 cases_page = dbc.Container([
                 change_card(data=data_dict['cases_tl'], col='Total Cases', date_col='Reported Date', title="Active Cases", color_invert=True),
-                dcc.Graph(id='fig_plot_time',
-                          figure=fig_dict['fig_plot_time'],
-                          config={"displayModeBar": False}),])
-
-vaccine_page = dbc.Container([
+                dcc.Graph(id='fig_case_area',
+                          figure=fig_dict['fig_case_area'],
+                          config={"displayModeBar": False}),
+                dcc.Graph(id='fig_death_area',
+                          figure=fig_dict['fig_death_area'],
+                          config={"displayModeBar": False}),
                 dcc.Graph(id='fig_vax_ratio_time',
                           figure=fig_dict['fig_vax_ratio_time'],
                           config={"displayModeBar": False}),
                 dcc.Graph(id='fig_vax_time',
                           figure=fig_dict['fig_vax_time'],
                           config={"displayModeBar": False})])
+
+vaccine_page = dbc.Container([
+                dcc.Graph(id='fig_vax',
+                          figure=fig_dict['fig_vax'],
+                          config={"displayModeBar": False}),
+                dcc.Graph(id='pie_vax',
+                        figure=fig_dict['pie_vax'],
+                        config={"displayModeBar": False})
+                ])
 
 hosp_page = dbc.Container([
                 dbc.Row([
