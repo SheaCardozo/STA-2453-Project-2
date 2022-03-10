@@ -95,7 +95,7 @@ def create_fig_dict (data_dict: dict):
     fully_area_view['Vaccination Status'] = "Tot Vaxed"
     fully_area_view['Value'] = vax['Tot Vaxed']/14826276
 
-    import plotly.graph_objects as go
+    
 
     fig_vax = px.line(part_area_view.append(fully_area_view), x="Date", y="Value", color='Vaccination Status')
 
