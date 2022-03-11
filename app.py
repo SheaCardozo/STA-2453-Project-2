@@ -61,29 +61,48 @@ sidebar = html.Div(
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), dcc.Store(id="store"), sidebar, dcc.Loading(id="loading-content", type="default", children=content)])
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 main_page = dbc.Container([
     dbc.Tabs(
             [
-                dbc.Tab(label="Active Cases", tab_id="map_ont_ac"),
                 dbc.Tab(label="Positive Test Rate", tab_id="map_ont_test"),
             ],
             id="tabs",
-            active_tab="map_ont_ac",
+            active_tab="map_ont_test",
         ),
         html.Div(id="tab-content", className="p-4"),
 ])
 
 cases_page = dbc.Container([
-                change_card(data=data_dict['cases_tl'], col='Total Cases', date_col='Reported Date', title="Active Cases", color_invert=True),
+                dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Case Changes Today"), width='auto'), 
+                    ]),
+                html.Hr(),
+                dbc.Row([
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Total Cases', date_col='Reported Date', title="Active Cases", color_invert=True), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='New Cases', date_col='Reported Date', title="New Cases", color_invert=True), width='auto'),
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='New Deaths', date_col='Reported Date', title="New Deaths", color_invert=True), width='auto')
+                    ]),
+                dbc.Row([
+                    dbc.Col(html.H2("New COVID-19 Cases by PHU"), width='auto'), 
+                    ], style={"margin-top": "32px"}),
+                html.Hr(),
+                dbc.Tabs(
+                    [
+                        dbc.Tab(label="Count", tab_id="map_cases_count"),
+                        dbc.Tab(label="Rate", tab_id="map_cases_rate"),
+                    ],
+                    id="cases-tabs",
+                    active_tab="map_cases_count",
+                ),
+                dcc.Loading(id="cases-loading-content", type="default", children=html.Div(id="cases-tab-content", className="p-4")),
                 dcc.Graph(id='fig_case_area',
-                          figure=fig_dict['fig_case_area'],
-                          config={"displayModeBar": False}),
+                          figure=fig_dict['fig_case_area']),
                 dcc.Graph(id='fig_death_area',
-                          figure=fig_dict['fig_death_area'],
-                          config={"displayModeBar": False}),
+                          figure=fig_dict['fig_death_area']),
                 dcc.Graph(id='fig_vax_ratio_time',
+<<<<<<< HEAD
                           figure=fig_dict['fig_vax_ratio_time'],
                           config={"displayModeBar": False}),
 ])
@@ -94,8 +113,26 @@ tests_page = dbc.Container([
                           config={"displayModeBar": False}),
 ])
 
+=======
+                          figure=fig_dict['fig_vax_ratio_time']),
+                dcc.Graph(id='fig_vax_time',
+                          figure=fig_dict['fig_vax_time'])])
+>>>>>>> 1763cc16c55d443fbd241ac869ea435d2a3e1284
 
 vaccine_page = dbc.Container([
+                dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Vaccination Changes Today"), width='auto'), 
+                    ]),
+                html.Hr(),
+                dbc.Row([
+                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_partially', date_col='report_date', title="Partially Vaccinated", color_invert=False, percentage=True), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_fully', date_col='report_date', title="Fully Vaccinated", color_invert=False, percentage=True), width='auto'),
+                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_boosted', date_col='report_date', title="Boosted", color_invert=False, percentage=True), width='auto')
+                    ]),
+                dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Vaccination Over Time", style={"margin-top": "32px"}), width='auto'), 
+                    ]),
+                html.Hr(),
                 dcc.Graph(id='fig_vax',
                           figure=fig_dict['fig_vax'],
                           config={"displayModeBar": False}),
@@ -110,7 +147,7 @@ vaccine_page = dbc.Container([
 
 hosp_page = dbc.Container([
                 dbc.Row([
-                    dbc.Col(html.H2("COVID-19 Hospital Admissions"), width='auto'), 
+                    dbc.Col(html.H2("COVID-19 Hospital Admissions Today"), width='auto'), 
                     ]),
                 html.Hr(),
                 dbc.Row([
@@ -124,8 +161,7 @@ hosp_page = dbc.Container([
                 html.Hr(),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_area',
-                            figure=fig_dict['fig_hosp_area'],
-                            config={"displayModeBar": False}), width=12)
+                            figure=fig_dict['fig_hosp_area']), width=12)
                     ]),
                 dbc.Row([
                     dbc.Col(html.H2("Vaccination Status of Hospitalizations", style={"margin-top": "32px"}), width='auto'), 
@@ -133,19 +169,15 @@ hosp_page = dbc.Container([
                 html.Hr(),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_general_pop',
-                            figure=fig_dict['fig_hosp_general_pop'],
-                            config={"displayModeBar": False}), width=4, align='end'), 
+                            figure=fig_dict['fig_hosp_general_pop']), width=4, align='end'), 
                 ], justify='center'),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_tot',
-                            figure=fig_dict['fig_hosp_vax_tot'],
-                            config={"displayModeBar": False}), width=4), 
+                            figure=fig_dict['fig_hosp_vax_tot']), width=4), 
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_icu',
-                            figure=fig_dict['fig_hosp_vax_icu'],
-                            config={"displayModeBar": False}), width=4),
+                            figure=fig_dict['fig_hosp_vax_icu']), width=4),
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_nonicu',
-                            figure=fig_dict['fig_hosp_vax_nonicu'],
-                            config={"displayModeBar": False}), width=4),
+                            figure=fig_dict['fig_hosp_vax_nonicu']), width=4),
                 ]),
             ])
 
@@ -177,6 +209,25 @@ def render_page_content(pathname):
 @app.callback(
     Output("tab-content", "children"),
     Input("tabs", "active_tab")
+)
+def render_tab_content(active_tab):
+    """
+    This callback takes the 'active_tab' property as input, as well as the
+    stored graphs, and renders the tab content depending on what the value of
+    'active_tab' is.
+    """
+
+    if active_tab is not None:
+        return dcc.Graph(id=active_tab,
+                         figure=fig_dict[active_tab],
+                         config={"displayModeBar": False})
+
+    return "No tab selected"
+
+
+@app.callback(
+    Output("cases-tab-content", "children"),
+    Input("cases-tabs", "active_tab")
 )
 def render_tab_content(active_tab):
     """

@@ -9,7 +9,7 @@ def suffix(d):
 def custom_strftime(format, t):
     return t.strftime(format).replace('{S}', str(t.day) + suffix(t.day))
 
-def change_card(data, col, date_col, title, color_invert=False):
+def change_card(data, col, date_col, title, color_invert=False, percentage=False):
 
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
@@ -26,6 +26,17 @@ def change_card(data, col, date_col, title, color_invert=False):
 
     color_list = ['g', 'r']
 
+    per = ""
+
+    curr_str = locale.format("%d", curr, grouping=True)
+    chg_str = locale.format("%d", change_a, grouping=True)
+
+    if percentage:
+        per = "%"
+        curr = curr * 100
+        change_a = change_a * 100
+        curr_str = str(round(curr, 1))
+        chg_str = str(round(change_a, 2))
     if color_invert:
         color_list.reverse()
 
@@ -42,9 +53,9 @@ def change_card(data, col, date_col, title, color_invert=False):
             [
                 dbc.Row([dbc.Col(html.H3(title, className="card-title", style={"margin": "0px"}), width="auto")], justify="center"),
                 html.Hr(style={"margin": "8px"}),
-                dbc.Row([dbc.Col(html.H1(locale.format("%d", curr, grouping=True)), width="auto")], justify="center"),
+                dbc.Row([dbc.Col(html.H1(curr_str+per), width="auto")], justify="center"),
                 dbc.Row([dbc.Col(html.Div(), width=4),
-                         dbc.Col(dbc.Row(dbc.Col(html.H5(locale.format("%d", change_a, grouping=True), style={"margin": "0px"}), width="auto"), justify="center"), width=4, style={"padding": "1px"}, align="end"),
+                         dbc.Col(dbc.Row(dbc.Col(html.H5(chg_str, style={"margin": "0px"}), width="auto"), justify="center"), width=4, style={"padding": "1px"}, align="end"),
                          dbc.Col(dbc.Row(dbc.Col(html.Img(src=asset, style={"width": "10px"}), width="auto"), justify="start"), width=4, style={"padding": "1px"}, align="center")], justify="start"),
             ]
         ),
