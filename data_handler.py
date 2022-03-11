@@ -99,6 +99,7 @@ def data_transforms (data_dict):
 
     data_dict['hosp_vax']['total'] = data_dict['hosp_vax']['icu'] + data_dict['hosp_vax']['nonicu']
 
+    data_dict['cases_tl']['Deaths'] = data_dict['cases_tl']['Deaths'].where(~data_dict['cases_tl']['Deaths'].isna(), data_dict['cases_tl']['Deaths_New_Methodology'])
 
     data_dict['cases_tl']['Reported Date'] = pd.to_datetime(data_dict['cases_tl']['Reported Date'], format='%Y-%m-%d')
     data_dict['cases_tl']['Tests'] = data_dict['cases_tl']['Total tests completed in the last day']
