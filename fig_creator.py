@@ -88,16 +88,19 @@ def create_fig_dict (data_dict: dict):
     view3 = vax[vax['Date'] > now - pd.Timedelta(days=180)]
 
     part_area_view = pd.DataFrame(data={"Date": view3['Date']}, columns=['Date'])
-    part_area_view['Vaccination Status'] = "part Vaxed"
-    part_area_view['Value'] = vax['total_individuals_at_least_one']/ 14826276
+    part_area_view['Vaccination Status'] = "Partially Vaccinated"
+    part_area_view['Percentage'] = (vax['total_individuals_at_least_one'] - vax['Tot Vaxed']) / 14826276
 
     fully_area_view = pd.DataFrame(data={"Date": view3['Date']}, columns=['Date'])
-    fully_area_view['Vaccination Status'] = "Tot Vaxed"
-    fully_area_view['Value'] = vax['Tot Vaxed']/14826276
+    fully_area_view['Vaccination Status'] = "Fully Vaccinated"
+    fully_area_view['Percentage'] = (vax['Tot Vaxed'] - vax['total_individuals_3doses'].fillna(0)) / 14826276
 
+    boosted_area_view = pd.DataFrame(data={"Date": view3['Date']}, columns=['Date'])
+    boosted_area_view['Vaccination Status'] = "Boosted"
+    boosted_area_view['Percentage'] = vax['total_individuals_3doses'] / 14826276
     
 
-    fig_vax = px.line(pd.concat((part_area_view, fully_area_view)), x="Date", y="Value", color='Vaccination Status')
+    fig_vax = px.area(pd.concat((part_area_view, fully_area_view, boosted_area_view)), x="Date", y="Percentage", color='Vaccination Status')
 
     vax_age = data_dict['vax_age']
     view3 = vax_age[vax_age['Date'] > now - pd.Timedelta(days=1)]
@@ -117,12 +120,10 @@ def create_fig_dict (data_dict: dict):
 
     hosp_area_view_icu = pd.DataFrame(data={"Date": hosp_area_view['date']}, columns=['Date'])
     hosp_area_view_icu['Type'] = "ICU"
-    hosp_area_view_icu['Vaccination Status'] = "Unvaccinated"
     hosp_area_view_icu['Hospitalizations'] = hosp_area_view['icu']
 
     hosp_area_view_nonicu = pd.DataFrame(data={"Date": hosp_area_view['date']}, columns=['Date'])
     hosp_area_view_nonicu['Type'] = "Non-ICU"
-    hosp_area_view_icu['Vaccination Status'] = "Unvaccinated"
     hosp_area_view_nonicu['Hospitalizations'] = hosp_area_view['nonicu']
 
     fig_hosp_area = px.area(pd.concat([hosp_area_view_icu, hosp_area_view_nonicu], ignore_index=True), x="Date",

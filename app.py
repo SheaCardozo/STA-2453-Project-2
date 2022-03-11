@@ -116,6 +116,10 @@ vaccine_page = dbc.Container([
                     dbc.Col(change_card(data=data_dict['vax_stat'], col='per_fully', date_col='report_date', title="Fully Vaccinated", color_invert=False, percentage=True), width='auto'),
                     dbc.Col(change_card(data=data_dict['vax_stat'], col='per_boosted', date_col='report_date', title="Boosted", color_invert=False, percentage=True), width='auto')
                     ]),
+                dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Vaccination Over Time", style={"margin-top": "32px"}), width='auto'), 
+                    ]),
+                html.Hr(),
                 dcc.Graph(id='fig_vax',
                           figure=fig_dict['fig_vax'],
                           config={"displayModeBar": False}),
@@ -140,8 +144,7 @@ hosp_page = dbc.Container([
                 html.Hr(),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_area',
-                            figure=fig_dict['fig_hosp_area'],
-                            config={"displayModeBar": False}), width=12)
+                            figure=fig_dict['fig_hosp_area']), width=12)
                     ]),
                 dbc.Row([
                     dbc.Col(html.H2("Vaccination Status of Hospitalizations", style={"margin-top": "32px"}), width='auto'), 
@@ -149,19 +152,15 @@ hosp_page = dbc.Container([
                 html.Hr(),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_general_pop',
-                            figure=fig_dict['fig_hosp_general_pop'],
-                            config={"displayModeBar": False}), width=4, align='end'), 
+                            figure=fig_dict['fig_hosp_general_pop']), width=4, align='end'), 
                 ], justify='center'),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_tot',
-                            figure=fig_dict['fig_hosp_vax_tot'],
-                            config={"displayModeBar": False}), width=4), 
+                            figure=fig_dict['fig_hosp_vax_tot']), width=4), 
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_icu',
-                            figure=fig_dict['fig_hosp_vax_icu'],
-                            config={"displayModeBar": False}), width=4),
+                            figure=fig_dict['fig_hosp_vax_icu']), width=4),
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_nonicu',
-                            figure=fig_dict['fig_hosp_vax_nonicu'],
-                            config={"displayModeBar": False}), width=4),
+                            figure=fig_dict['fig_hosp_vax_nonicu']), width=4),
                 ]),
             ])
 
