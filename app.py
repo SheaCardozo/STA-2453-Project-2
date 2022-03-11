@@ -102,22 +102,13 @@ cases_page = dbc.Container([
                 dcc.Graph(id='fig_death_area',
                           figure=fig_dict['fig_death_area']),
                 dcc.Graph(id='fig_vax_ratio_time',
-<<<<<<< HEAD
-                          figure=fig_dict['fig_vax_ratio_time'],
-                          config={"displayModeBar": False}),
-])
+                          figure=fig_dict['fig_vax_ratio_time'])])
 
 tests_page = dbc.Container([
                 dcc.Graph(id='tests_hosp_area',
                           figure=fig_dict['tests_hosp_area'],
                           config={"displayModeBar": False}),
 ])
-
-=======
-                          figure=fig_dict['fig_vax_ratio_time']),
-                dcc.Graph(id='fig_vax_time',
-                          figure=fig_dict['fig_vax_time'])])
->>>>>>> 1763cc16c55d443fbd241ac869ea435d2a3e1284
 
 vaccine_page = dbc.Container([
                 dbc.Row([

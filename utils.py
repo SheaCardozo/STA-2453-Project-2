@@ -1,5 +1,6 @@
 from dash import html
 import dash_bootstrap_components as dbc
+import numpy as np
 import pandas as pd
 import locale
 
@@ -28,15 +29,19 @@ def change_card(data, col, date_col, title, color_invert=False, percentage=False
 
     per = ""
 
-    curr_str = locale.format("%d", curr, grouping=True)
-    chg_str = locale.format("%d", change_a, grouping=True)
-
     if percentage:
         per = "%"
         curr = curr * 100
         change_a = change_a * 100
         curr_str = str(round(curr, 1))
         chg_str = str(round(change_a, 2))
+    elif not np.isnan(curr):
+        curr_str = locale.format("%d", curr, grouping=True)
+        chg_str = locale.format("%d", change_a, grouping=True)
+    else:
+        curr_str = "N/A"
+        chg_str = "N/A"
+
     if color_invert:
         color_list.reverse()
 
