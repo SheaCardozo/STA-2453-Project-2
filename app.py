@@ -61,16 +61,15 @@ sidebar = html.Div(
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), dcc.Store(id="store"), sidebar, dcc.Loading(id="loading-content", type="default", children=content)])
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 main_page = dbc.Container([
     dbc.Tabs(
             [
-                dbc.Tab(label="Active Cases", tab_id="map_ont_ac"),
                 dbc.Tab(label="Positive Test Rate", tab_id="map_ont_test"),
             ],
             id="tabs",
-            active_tab="map_ont_ac",
+            active_tab="map_ont_test",
         ),
         html.Div(id="tab-content", className="p-4"),
 ])
@@ -85,6 +84,19 @@ cases_page = dbc.Container([
                     dbc.Col(change_card(data=data_dict['cases_tl'], col='New Cases', date_col='Reported Date', title="New Cases", color_invert=True), width='auto'),
                     dbc.Col(change_card(data=data_dict['cases_tl'], col='New Deaths', date_col='Reported Date', title="New Deaths", color_invert=True), width='auto')
                     ]),
+                dbc.Row([
+                    dbc.Col(html.H2("New COVID-19 Cases by PHU"), width='auto'), 
+                    ], style={"margin-top": "32px"}),
+                html.Hr(),
+                dbc.Tabs(
+                    [
+                        dbc.Tab(label="Count", tab_id="map_cases_count"),
+                        dbc.Tab(label="Rate", tab_id="map_cases_rate"),
+                    ],
+                    id="cases-tabs",
+                    active_tab="map_cases_count",
+                ),
+                dcc.Loading(id="cases-loading-content", type="default", children=html.Div(id="cases-tab-content", className="p-4")),
                 dcc.Graph(id='fig_case_area',
                           figure=fig_dict['fig_case_area']),
                 dcc.Graph(id='fig_death_area',
@@ -181,6 +193,25 @@ def render_page_content(pathname):
 @app.callback(
     Output("tab-content", "children"),
     Input("tabs", "active_tab")
+)
+def render_tab_content(active_tab):
+    """
+    This callback takes the 'active_tab' property as input, as well as the
+    stored graphs, and renders the tab content depending on what the value of
+    'active_tab' is.
+    """
+
+    if active_tab is not None:
+        return dcc.Graph(id=active_tab,
+                         figure=fig_dict[active_tab],
+                         config={"displayModeBar": False})
+
+    return "No tab selected"
+
+
+@app.callback(
+    Output("cases-tab-content", "children"),
+    Input("cases-tabs", "active_tab")
 )
 def render_tab_content(active_tab):
     """

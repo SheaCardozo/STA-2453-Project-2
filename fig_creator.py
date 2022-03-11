@@ -150,23 +150,25 @@ def create_maps (data_dict: dict, fig_dict: dict):
     merged_cases_view = pd.merge(data_dict['phu_match'], cases_view, how="left", left_on="PHU_ID", right_on="PHU_NUM") 
     merged_tests_view = pd.merge(data_dict['phu_match'], tests_view, how="left", left_on="PHU_ID", right_on="PHU_num") 
 
-    phu_map['Cases'] = merged_cases_view['ACTIVE_CASES']
+    phu_map['Active Cases'] = merged_cases_view['ACTIVE_CASES'] 
+    phu_map['Active Case Rate'] = merged_cases_view['ACTIVE_CASES'] / merged_cases_view['POP']
+
     phu_map['PHU'] = merged_cases_view['NAME_ENG']
     phu_map['Test Positive Rate'] = merged_tests_view['percent_positive_7d_avg']
     phu_map['id'] = phu_map.index
 
     phu_map = phu_map.to_crs(epsg=4326)
 
-    map_ont_ac = px.choropleth(phu_map, geojson=phu_map.geometry, 
-                        locations="id", color="Cases", 
-                        hover_data={'PHU':True, 'Cases':True, 'id':False},
+    map_cases_count = px.choropleth(phu_map, geojson=phu_map.geometry, 
+                        locations="id", color="Active Cases", 
+                        hover_data={'PHU':True, 'Active Cases':True, 'id':False},
                         fitbounds="locations",
                         height=750,
-                        color_continuous_scale="Viridis")
+                        color_continuous_scale="ylorrd")
 
-    map_ont_ac.update_geos(resolution=110)
+    map_cases_count.update_geos(resolution=110)
 
-    map_ont_ac.update_layout(
+    map_cases_count.update_layout(
         title=dict(x=0.5),
         title_text='Active Cases by PHU',
         margin={"r":0,"t":30,"l":0,"b":10},
@@ -174,6 +176,22 @@ def create_maps (data_dict: dict, fig_dict: dict):
                    "showscale": False},
         dragmode=False)
 
+    map_cases_rate = px.choropleth(phu_map, geojson=phu_map.geometry, 
+                        locations="id", color="Active Case Rate", 
+                        hover_data={'PHU':True, 'Active Case Rate':True, 'id':False},
+                        fitbounds="locations",
+                        height=750,
+                        color_continuous_scale="ylorrd")
+
+    map_cases_rate.update_geos(resolution=110)
+
+    map_cases_rate.update_layout(
+        title=dict(x=0.5),
+        title_text='Active Case Rate by PHU',
+        margin={"r":0,"t":30,"l":0,"b":10},
+        coloraxis={"colorbar":{"title":{"text":""}},
+                   "showscale": False},
+        dragmode=False)
 
     map_ont_test = px.choropleth(phu_map, geojson=phu_map.geometry, 
                         locations="id", color="Test Positive Rate", 
@@ -192,7 +210,8 @@ def create_maps (data_dict: dict, fig_dict: dict):
                    "showscale": False},
         dragmode=False)
 
-    fig_dict['map_ont_ac'] = map_ont_ac
+    fig_dict['map_cases_count'] = map_cases_count
+    fig_dict['map_cases_rate'] = map_cases_rate
     fig_dict['map_ont_test'] = map_ont_test
 
 
