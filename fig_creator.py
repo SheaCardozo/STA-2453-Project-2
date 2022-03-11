@@ -39,8 +39,6 @@ def create_fig_dict (data_dict: dict):
     view4 = pd.merge(view3, view2, on=['Date'])
     view4['ratio'] = (view4['covid19_cases_full_vac']/view4['Tot Vaxed'])/(view4['covid19_cases_unvac']/view4['UnVaxed'])
 
-    df = pd.DataFrame(data={'Vax Status': ['Fully Vaccinated', 'Partially Vaccinated', 'Unvaccinated'], 'values': [np.mean(view4['covid19_cases_full_vac']/view4['Tot Vaxed']), np.mean(view4['covid19_cases_partial_vac']/view4['part Vaxed']), np.mean(view4['covid19_cases_unvac']/view4['UnVaxed'])]})
-    fig = px.pie(df, values='values', names='Vax Status', title='Vaccination Status of Covid Cases on average')
     fig_vax_ratio_time = px.line(view4, x="Date", y="ratio",
                             title='Ratio of Ratio of Fully Vaxed cases to Ratio of UnVaxed cases')
 
@@ -48,8 +46,6 @@ def create_fig_dict (data_dict: dict):
     fig_dict['fig_case_area'] = fig_case_area
     fig_dict['fig_death_area'] = fig_death_area
     fig_dict['fig_vax_ratio_time'] = fig_vax_ratio_time
-    fig_dict['fig_vax_time'] = fig
-
 
     # Hospitalization Pie Charts
     hosp_vax_view = data_dict['hosp_vax'][data_dict['hosp_vax']['date'] == max(data_dict['hosp_vax']['date'])]
@@ -103,14 +99,14 @@ def create_fig_dict (data_dict: dict):
     view3 = vax_age[vax_age['Date'] > now - pd.Timedelta(days=1)]
 
     groups =['05-11yrs', '12-17yrs', '18-29yrs', '30-39yrs','40-49yrs','50-59yrs','60-69yrs','70-79yrs']
-    values = []
-    for gp in groups:
-        values.append(view3[view3['Agegroup'] == gp]['Percent_fully_vaccinated'].to_numpy()[0])
-    df_1 = pd.DataFrame(data={'Age group': groups, 'values': values})
-    pie_fig = px.pie(df_1, values='values', names='Age group', title='Vaccination percentage based on age')
+    for gp in range(len(groups)):
+        view = view3[view3['Agegroup'] == groups[gp]]
+        df = pd.DataFrame(data={'Vax Status': ['Fully Vaxed', 'Partially Vaxed'], 'values': [view['Percent_fully_vaccinated'].to_numpy()[0], view['Percent_at_least_one_dose'].to_numpy()[0] - view['Percent_fully_vaccinated'].to_numpy()[0]]})
+        pie_fig = px.pie(df, values='values', names='Vax Status', title='Vaccination % for '+ groups[gp])
+        fig_dict['vax'+str(gp)] = pie_fig
+
 
     fig_dict['fig_vax'] = fig_vax
-    fig_dict['pie_vax'] = pie_fig
 
     # Hospitalization Area Charts
     hosp_area_view = data_dict['hosp_vax'][data_dict['hosp_vax']['date'] > now - pd.Timedelta(days=180)]
@@ -132,6 +128,22 @@ def create_fig_dict (data_dict: dict):
 
     fig_dict['fig_hosp_area'] = fig_hosp_area
 
+    # Tests Area Charts
+    tests_area_view = data_dict['cases_tl'][data_dict['cases_tl']['Reported Date'] > now - pd.Timedelta(days=180)]
+
+    tests_area_view_overall = pd.DataFrame(data={"Date": tests_area_view['Reported Date']}, columns=['Date'])
+    tests_area_view_overall['Type'] = "Number of Tests"
+    tests_area_view_overall['Value'] = data_dict['cases_tl']['Tests']
+
+    tests_area_view_pos = pd.DataFrame(data={"Date": tests_area_view['Reported Date']}, columns=['Date'])
+    tests_area_view_pos['Type'] = "Number of Positive Tests"
+    tests_area_view_pos['Value'] = data_dict['cases_tl']['Positive Tests']
+
+    tests_hosp_area = px.area(pd.concat([tests_area_view_pos,tests_area_view_overall], ignore_index=True), x="Date",
+                            y='Value', color="Type",
+                            line_group="Type")
+
+    fig_dict['tests_hosp_area'] = tests_hosp_area
 
     fig_dict = create_maps(data_dict, fig_dict)
 

@@ -86,17 +86,26 @@ cases_page = dbc.Container([
                 dcc.Graph(id='fig_vax_ratio_time',
                           figure=fig_dict['fig_vax_ratio_time'],
                           config={"displayModeBar": False}),
-                dcc.Graph(id='fig_vax_time',
-                          figure=fig_dict['fig_vax_time'],
-                          config={"displayModeBar": False})])
+])
+
+tests_page = dbc.Container([
+                dcc.Graph(id='tests_hosp_area',
+                          figure=fig_dict['tests_hosp_area'],
+                          config={"displayModeBar": False}),
+])
+
 
 vaccine_page = dbc.Container([
                 dcc.Graph(id='fig_vax',
                           figure=fig_dict['fig_vax'],
                           config={"displayModeBar": False}),
-                dcc.Graph(id='pie_vax',
-                        figure=fig_dict['pie_vax'],
-                        config={"displayModeBar": False})
+                html.Hr(),
+
+                dbc.Row([
+                    dbc.Col(dcc.Graph(id='vax'+str(gp),
+                                      figure=fig_dict['vax'+str(gp)],
+                                      config={"displayModeBar": False}), width=4) for gp in range(8)
+                ]),
                 ])
 
 hosp_page = dbc.Container([
@@ -151,7 +160,7 @@ def render_page_content(pathname):
     elif pathname == "/hospitalizations":
         return hosp_page
     elif pathname == "/testing":
-        return html.P("Testing Placeholder")
+        return tests_page
     elif pathname == "/vaccinations":
         return vaccine_page
     # If the user tries to reach a different page, return a 404 message

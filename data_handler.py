@@ -100,6 +100,8 @@ def data_transforms (data_dict):
 
 
     data_dict['cases_tl']['Reported Date'] = pd.to_datetime(data_dict['cases_tl']['Reported Date'], format='%Y-%m-%d')
+    data_dict['cases_tl']['Tests'] = data_dict['cases_tl']['Total tests completed in the last day']
+    data_dict['cases_tl']['Positive Tests'] = data_dict['cases_tl']['Total tests completed in the last day'] * data_dict['cases_tl']['Percent positive tests in last day']/100
     data_dict['cases_vaxed']['Date'] = pd.to_datetime(data_dict['cases_vaxed']['Date'], format='%Y-%m-%d')
 
     data_dict['cases_vaxed']['Tot Cases'] = data_dict['cases_vaxed']['covid19_cases_unvac'] + data_dict['cases_vaxed']['covid19_cases_partial_vac'] +\
