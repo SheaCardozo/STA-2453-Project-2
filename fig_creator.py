@@ -96,20 +96,39 @@ def create_fig_dict (data_dict: dict):
     boosted_area_view['Percentage'] = vax['total_individuals_3doses'] / 14826276
     
 
-    fig_vax = px.area(pd.concat((part_area_view, fully_area_view, boosted_area_view)), x="Date", y="Percentage", color='Vaccination Status')
+    fig_vax = px.area(pd.concat((part_area_view, fully_area_view, boosted_area_view)), x="Date", y="Percentage", color='Vaccination Status', \
+            color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
+                                 'Partially Vaccinated': px.colors.qualitative.Plotly[3],
+                                 'Fully Vaccinated': px.colors.qualitative.Plotly[0],
+                                 'Boosted' :px.colors.qualitative.Plotly[2]})
 
     vax_age = data_dict['vax_age']
     view3 = vax_age[vax_age['Date'] > now - pd.Timedelta(days=1)]
+    groups =['05-11yrs', '12-17yrs', '18-29yrs', '30-39yrs','40-49yrs','50-59yrs','60-69yrs','70-79yrs', '80+']
+    groupnm =['5-11 Year Olds', '12-17 Year Olds', '18-29 Year Olds', '30-39 Year Olds','40-49 Year Olds','50-59 Year Olds','60-69 Year Olds','70-79 Year Olds', '80+ Year Olds']
 
-    groups =['05-11yrs', '12-17yrs', '18-29yrs', '30-39yrs','40-49yrs','50-59yrs','60-69yrs','70-79yrs']
     for gp in range(len(groups)):
         view = view3[view3['Agegroup'] == groups[gp]]
-        df = pd.DataFrame(data={'Vax Status': ['Fully Vaxed', 'Partially Vaxed'], 'values': [view['Percent_fully_vaccinated'].to_numpy()[0], view['Percent_at_least_one_dose'].to_numpy()[0] - view['Percent_fully_vaccinated'].to_numpy()[0]]})
-        pie_fig = px.pie(df, values='values', names='Vax Status', title='Vaccination % for '+ groups[gp])
+        df = pd.DataFrame(data={'Vaccination Status': ['Unvaccinated', 'Partially Vaccinated', 'Fully Vaccinated', 'Boosted'],\
+                             'Number': [view['Total population'].to_numpy()[0] - view['At least one dose_cumulative'].to_numpy()[0],
+                                        view['At least one dose_cumulative'].to_numpy()[0] - view['fully_vaccinated_cumulative'].to_numpy()[0],
+                                        view['fully_vaccinated_cumulative'].to_numpy()[0] - view['third_dose_cumulative'].to_numpy()[0],
+                                        view['third_dose_cumulative'].to_numpy()[0]]})
+
+        pie_fig = px.pie(df, values='Number', names='Vaccination Status', color="Vaccination Status", title='Vaccination Status for '+ groupnm[gp], \
+            color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
+                                 'Partially Vaccinated': px.colors.qualitative.Plotly[3],
+                                 'Fully Vaccinated': px.colors.qualitative.Plotly[0],
+                                 'Boosted' :px.colors.qualitative.Plotly[2]})
+        pie_fig.update_traces(sort=False) 
         fig_dict['vax'+str(gp)] = pie_fig
-
-
     fig_dict['fig_vax'] = fig_vax
+
+    '''
+    view['Percent_fully_vaccinated'].to_numpy()[0] - view['total_individuals_3doses'].fillna(0).to_numpy()[0], \
+                                                                            view['total_individuals_at_least_one'].to_numpy()[0] - view['Tot Vaxed'].to_numpy()[0],\
+                                                                            view['total_individuals_3doses'].fillna(0).to_numpy()[0]
+    '''
 
     # Hospitalization Area Charts
     hosp_area_view = data_dict['hosp_vax'][data_dict['hosp_vax']['date'] > now - pd.Timedelta(days=180)]

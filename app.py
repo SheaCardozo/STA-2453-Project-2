@@ -127,12 +127,14 @@ vaccine_page = dbc.Container([
                 dcc.Graph(id='fig_vax',
                           figure=fig_dict['fig_vax'],
                           config={"displayModeBar": False}),
+                dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Vaccination Rates by Age", style={"margin-top": "32px"}), width='auto'), 
+                    ]),
                 html.Hr(),
-
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='vax'+str(gp),
                                       figure=fig_dict['vax'+str(gp)],
-                                      config={"displayModeBar": False}), width=4) for gp in range(8)
+                                      config={"displayModeBar": False}), width=4) for gp in range(9)
                 ]),
                 ])
 
@@ -160,15 +162,15 @@ hosp_page = dbc.Container([
                 html.Hr(),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_general_pop',
-                            figure=fig_dict['fig_hosp_general_pop']), width=4, align='end'), 
+                            figure=fig_dict['fig_hosp_general_pop'], config={"displayModeBar": False}), width=4, align='end'), 
                 ], justify='center'),
                 dbc.Row([
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_tot',
-                            figure=fig_dict['fig_hosp_vax_tot']), width=4), 
+                            figure=fig_dict['fig_hosp_vax_tot'], config={"displayModeBar": False}), width=4), 
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_icu',
-                            figure=fig_dict['fig_hosp_vax_icu']), width=4),
+                            figure=fig_dict['fig_hosp_vax_icu'], config={"displayModeBar": False}), width=4),
                     dbc.Col(dcc.Graph(id='fig_hosp_vax_nonicu',
-                            figure=fig_dict['fig_hosp_vax_nonicu']), width=4),
+                            figure=fig_dict['fig_hosp_vax_nonicu'], config={"displayModeBar": False}), width=4),
                 ]),
             ])
 
