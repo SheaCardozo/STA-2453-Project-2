@@ -77,7 +77,7 @@ def create_fig_dict (data_dict: dict):
     hosp_vax_stat_view = data_dict['vax_stat'][data_dict['vax_stat']['report_date'] == max(data_dict['vax_stat']['report_date'])]
 
     hosp_vax_stat_tot_view = hosp_vax_stat_view[['UnVaxed12o','part Vaxed','Tot Vaxed']].T
-    hosp_vax_stat_tot_view = hosp_vax_stat_tot_view.rename(columns={hosp_vax_stat_tot_view.columns[0]: "Number"})
+    hosp_vax_stat_tot_view = hosp_vax_stat_tot_view.rename(columns={hosp_vax_stat_tot_view.columns[0]: "Count"})
     hosp_vax_stat_tot_view["Vaccination Status"] = ["Unvaccinated", "Partially Vaccinated", "Fully Vaccinated"]
 
     hosp_vax_tot_view = hosp_vax_view[['tot_unvac','tot_partial_vac','tot_full_vac']].T
@@ -107,7 +107,7 @@ def create_fig_dict (data_dict: dict):
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
                                  'Boosted' :px.colors.qualitative.Plotly[2]})
-    fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Number", names="Vaccination Status", color="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270, \
+    fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Count", names="Vaccination Status", color="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270, \
              color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
@@ -151,12 +151,12 @@ def create_fig_dict (data_dict: dict):
     for gp in range(len(groups)):
         view = view3[view3['Agegroup'] == groups[gp]]
         df = pd.DataFrame(data={'Vaccination Status': ['Unvaccinated', 'Partially Vaccinated', 'Fully Vaccinated', 'Boosted'],\
-                             'Number': [view['Total population'].to_numpy()[0] - view['At least one dose_cumulative'].to_numpy()[0],
+                             'Count': [view['Total population'].to_numpy()[0] - view['At least one dose_cumulative'].to_numpy()[0],
                                         view['At least one dose_cumulative'].to_numpy()[0] - view['fully_vaccinated_cumulative'].to_numpy()[0],
                                         view['fully_vaccinated_cumulative'].to_numpy()[0] - view['third_dose_cumulative'].to_numpy()[0],
                                         view['third_dose_cumulative'].to_numpy()[0]]})
 
-        pie_fig = px.pie(df, values='Number', names='Vaccination Status', color="Vaccination Status", title='Vaccination Status for '+ groupnm[gp], \
+        pie_fig = px.pie(df, values='Count', names='Vaccination Status', color="Vaccination Status", title='Vaccination Status for '+ groupnm[gp], \
             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
@@ -187,15 +187,15 @@ def create_fig_dict (data_dict: dict):
     tests_area_view = data_dict['cases_tl'][data_dict['cases_tl']['Reported Date'] > now - pd.Timedelta(days=180)]
 
     tests_area_view_overall = pd.DataFrame(data={"Date": tests_area_view['Reported Date']}, columns=['Date'])
-    tests_area_view_overall['Type'] = "Number of Tests"
-    tests_area_view_overall['Value'] = data_dict['cases_tl']['Tests']
+    tests_area_view_overall['Type'] = "Tests"
+    tests_area_view_overall['Count'] = data_dict['cases_tl']['Tests']
 
     tests_area_view_pos = pd.DataFrame(data={"Date": tests_area_view['Reported Date']}, columns=['Date'])
-    tests_area_view_pos['Type'] = "Number of Positive Tests"
-    tests_area_view_pos['Value'] = data_dict['cases_tl']['Positive Tests']
+    tests_area_view_pos['Type'] = "Positive Tests"
+    tests_area_view_pos['Count'] = data_dict['cases_tl']['Positive Tests']
 
     tests_hosp_area = px.area(pd.concat([tests_area_view_pos,tests_area_view_overall], ignore_index=True), x="Date",
-                            y='Value', color="Type",
+                            y='Count', color="Type",
                             line_group="Type")
 
     fig_dict['tests_hosp_area'] = tests_hosp_area

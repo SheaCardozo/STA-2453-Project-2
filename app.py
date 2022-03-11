@@ -63,18 +63,6 @@ content = html.Div(id="page-content", style=CONTENT_STYLE)
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
-'''
-main_page = dbc.Container([
-    dbc.Tabs(
-            [
-                dbc.Tab(label="Positive Test Rate", tab_id="map_ont_test"),
-            ],
-            id="tabs",
-            active_tab="map_ont_test",
-        ),
-        html.Div(id="tab-content", className="p-4"),
-])
-'''
 cases_page = dbc.Container([
                 dbc.Row([
                     dbc.Col(html.H2("COVID-19 Case Changes Today"), width='auto'), 
@@ -110,9 +98,20 @@ cases_page = dbc.Container([
                           figure=fig_dict['fig_vax_ratio_time'])])
 
 tests_page = dbc.Container([
+                 dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Testing Over Time"), width='auto'), 
+                    ]),
+                html.Hr(),
                 dcc.Graph(id='tests_hosp_area',
-                          figure=fig_dict['tests_hosp_area'],
-                          config={"displayModeBar": False}),
+                          figure=fig_dict['tests_hosp_area']),
+            dbc.Tabs(
+            [
+                dbc.Tab(label="Positive Test Rate", tab_id="map_ont_test"),
+            ],
+            id="tests-tabs",
+            active_tab="map_ont_test",
+        ),
+        dcc.Loading(id="tests-loading-content", type="default", children=html.Div(id="tests-tab-content", className="p-4")),
 ])
 
 vaccine_page = dbc.Container([
@@ -205,8 +204,8 @@ def render_page_content(pathname):
 
 
 @app.callback(
-    Output("tab-content", "children"),
-    Input("tabs", "active_tab")
+    Output("tests-tab-content", "children"),
+    Input("tests-tabs", "active_tab")
 )
 def render_tab_content(active_tab):
     """
