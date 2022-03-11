@@ -97,7 +97,7 @@ def create_fig_dict (data_dict: dict):
 
     
 
-    fig_vax = px.line(part_area_view.append(fully_area_view), x="Date", y="Value", color='Vaccination Status')
+    fig_vax = px.line(pd.concat((part_area_view, fully_area_view)), x="Date", y="Value", color='Vaccination Status')
 
     vax_age = data_dict['vax_age']
     view3 = vax_age[vax_age['Date'] > now - pd.Timedelta(days=1)]
