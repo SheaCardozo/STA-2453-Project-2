@@ -45,8 +45,8 @@ sidebar = html.Div(
         ),
         dbc.Nav(
             [
-                dbc.NavLink("Main", href="/", active="exact"),
-                dbc.NavLink("Cases", href="/cases", active="exact"),
+                #dbc.NavLink("Main", href="/", active="exact"),
+                dbc.NavLink("Cases", href="/", active="exact"),
                 dbc.NavLink("Hospitalizations", href="/hospitalizations", active="exact"),
                 dbc.NavLink("Testing", href="/testing", active="exact"),
                 dbc.NavLink("Vaccinations", href="/vaccinations", active="exact")
@@ -63,6 +63,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE)
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
+'''
 main_page = dbc.Container([
     dbc.Tabs(
             [
@@ -73,14 +74,14 @@ main_page = dbc.Container([
         ),
         html.Div(id="tab-content", className="p-4"),
 ])
-
+'''
 cases_page = dbc.Container([
                 dbc.Row([
                     dbc.Col(html.H2("COVID-19 Case Changes Today"), width='auto'), 
                     ]),
                 html.Hr(),
                 dbc.Row([
-                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Total Cases', date_col='Reported Date', title="Active Cases", color_invert=True), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='ACTIVE_CASES', date_col='Reported Date', title="Active Cases", color_invert=True), width='auto'), 
                     dbc.Col(change_card(data=data_dict['cases_tl'], col='New Cases', date_col='Reported Date', title="New Cases", color_invert=True), width='auto'),
                     dbc.Col(change_card(data=data_dict['cases_tl'], col='New Deaths', date_col='Reported Date', title="New Deaths", color_invert=True), width='auto')
                     ]),
@@ -97,10 +98,14 @@ cases_page = dbc.Container([
                     active_tab="map_cases_count",
                 ),
                 dcc.Loading(id="cases-loading-content", type="default", children=html.Div(id="cases-tab-content", className="p-4")),
-                dcc.Graph(id='fig_case_area',
-                          figure=fig_dict['fig_case_area']),
-                dcc.Graph(id='fig_death_area',
-                          figure=fig_dict['fig_death_area']),
+                dbc.Row([
+                    dbc.Col(html.H2("Active COVID-19 Cases and Deaths Over Time"), width='auto'), 
+                    ]),
+                html.Hr(),
+                dcc.Graph(id='fig_cases_death_area',
+                          figure=fig_dict['fig_cases_death_area']),
+            #    dcc.Graph(id='fig_death_area',
+            #              figure=fig_dict['fig_death_area']),
                 dcc.Graph(id='fig_vax_ratio_time',
                           figure=fig_dict['fig_vax_ratio_time'])])
 
@@ -178,9 +183,9 @@ hosp_page = dbc.Container([
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
+    #if pathname == "/":
+        #return main_page
     if pathname == "/":
-        return main_page
-    elif pathname == "/cases":
         return cases_page
     elif pathname == "/hospitalizations":
         return hosp_page

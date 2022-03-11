@@ -123,8 +123,10 @@ def data_transforms (data_dict):
     data_dict['vax_stat']['per_boosted'] = data_dict['vax_stat']['total_individuals_3doses'] / 14826276
 
     data_dict['vax_age']['Date'] = pd.to_datetime(data_dict['vax_age']['Date'])
-
     data_dict['cases_phu']['FILE_DATE'] = pd.to_datetime(data_dict['cases_phu']['FILE_DATE'], format='%Y-%m-%d')
+    cases_phu = data_dict['cases_phu'][['FILE_DATE', 'ACTIVE_CASES']].groupby('FILE_DATE').sum()
+
+    data_dict['cases_tl'] = pd.merge(data_dict['cases_tl'], cases_phu, how='left', left_on='Reported Date', right_on='FILE_DATE')
     data_dict['tests_phu']['DATE'] = pd.to_datetime(data_dict['tests_phu']['DATE'], format='%Y-%m-%d')
 
     return data_dict

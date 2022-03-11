@@ -1,6 +1,8 @@
 import pandas as pd
 import plotly.express as px
 import numpy as np
+import plotly.graph_objects as go
+import plotly 
 
 def create_fig_dict (data_dict: dict):
     '''
@@ -15,7 +17,7 @@ def create_fig_dict (data_dict: dict):
 
     case_area_view = pd.DataFrame(data={"Date": view[1:]['Reported Date']}, columns=['Date'])
     case_area_view['Type'] = "Total Cases"
-    case_area_view['Value'] = view['Total Cases'].to_numpy()[1:] - view['Total Cases'].to_numpy()[:-1]
+    case_area_view['Value'] = view['ACTIVE_CASES'].to_numpy()[1:]# - view['Total Cases'].to_numpy()[:-1]
 
     death_area_view = pd.DataFrame(data={"Date": view[1:]['Reported Date']}, columns=['Date'])
     death_area_view['Type'] = "Deaths"
@@ -42,8 +44,31 @@ def create_fig_dict (data_dict: dict):
     fig_vax_ratio_time = px.line(view4, x="Date", y="ratio",
                             title='Ratio of Ratio of Fully Vaxed cases to Ratio of UnVaxed cases')
 
+    fig_cases_death_area = plotly.subplots.make_subplots(specs=[[{"secondary_y": True}]])
 
-    fig_dict['fig_case_area'] = fig_case_area
+    fig_cases_death_area.add_trace(
+        go.Scatter(x=case_area_view['Date'], y=case_area_view['Value'], name="Active Cases", fill='tozeroy'),
+        secondary_y=False,
+    )
+
+    fig_cases_death_area.add_trace(
+        go.Scatter(x=death_area_view['Date'], y=death_area_view['Value'], name="New Deaths", fill='tonexty'),
+        secondary_y=True,
+    )
+
+    fig_cases_death_area.update_layout(
+        title_text="Active COVID-19 Cases and Deaths Over Time"
+    )
+    
+
+    # Set x-axis title
+    fig_cases_death_area.update_xaxes(title_text="Date")
+
+    # Set y-axes titles
+    fig_cases_death_area.update_yaxes(title_text="Active Cases", secondary_y=False, rangemode="tozero")
+    fig_cases_death_area.update_yaxes(title_text="New Deaths", secondary_y=True, rangemode="tozero", range=[0, max(death_area_view['Value'])*1.1])
+
+    fig_dict['fig_cases_death_area'] = fig_cases_death_area
     fig_dict['fig_death_area'] = fig_death_area
     fig_dict['fig_vax_ratio_time'] = fig_vax_ratio_time
 
@@ -67,10 +92,26 @@ def create_fig_dict (data_dict: dict):
     hosp_vax_nonicu_view = hosp_vax_nonicu_view.rename(columns={ hosp_vax_nonicu_view.columns[0]: "Hospitalizations" })
     hosp_vax_nonicu_view["Vaccination Status"] = ["Unvaccinated", "Partially Vaccinated", "Fully Vaccinated"]
 
-    fig_hosp_vax_tot = px.pie(hosp_vax_tot_view, values="Hospitalizations", names="Vaccination Status", title='Vaccination Status of all Hospitalizations')
-    fig_hosp_vax_icu = px.pie(hosp_vax_icu_view, values="Hospitalizations", names="Vaccination Status", title='Vaccination Status of ICU Hospitalizations')
-    fig_hosp_vax_nonicu = px.pie(hosp_vax_nonicu_view, values="Hospitalizations", names="Vaccination Status", title='Vaccination Status of Non-ICU Hospitalizations')
-    fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Number", names="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270)
+    fig_hosp_vax_tot = px.pie(hosp_vax_tot_view, values="Hospitalizations", names="Vaccination Status", color="Vaccination Status", title='Vaccination Status of all Hospitalizations', \
+             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
+                                 'Partially Vaccinated': px.colors.qualitative.Plotly[3],
+                                 'Fully Vaccinated': px.colors.qualitative.Plotly[0],
+                                 'Boosted' :px.colors.qualitative.Plotly[2]})
+    fig_hosp_vax_icu = px.pie(hosp_vax_icu_view, values="Hospitalizations", names="Vaccination Status", color="Vaccination Status", title='Vaccination Status of ICU Hospitalizations', \
+             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
+                                 'Partially Vaccinated': px.colors.qualitative.Plotly[3],
+                                 'Fully Vaccinated': px.colors.qualitative.Plotly[0],
+                                 'Boosted' :px.colors.qualitative.Plotly[2]})
+    fig_hosp_vax_nonicu = px.pie(hosp_vax_nonicu_view, values="Hospitalizations", names="Vaccination Status", color="Vaccination Status", title='Vaccination Status of Non-ICU Hospitalizations', \
+             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
+                                 'Partially Vaccinated': px.colors.qualitative.Plotly[3],
+                                 'Fully Vaccinated': px.colors.qualitative.Plotly[0],
+                                 'Boosted' :px.colors.qualitative.Plotly[2]})
+    fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Number", names="Vaccination Status", color="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270, \
+             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
+                                 'Partially Vaccinated': px.colors.qualitative.Plotly[3],
+                                 'Fully Vaccinated': px.colors.qualitative.Plotly[0],
+                                 'Boosted' :px.colors.qualitative.Plotly[2]})
 
     fig_hosp_general_pop.update_layout(margin=dict(b=0))
 
@@ -123,12 +164,6 @@ def create_fig_dict (data_dict: dict):
         pie_fig.update_traces(sort=False) 
         fig_dict['vax'+str(gp)] = pie_fig
     fig_dict['fig_vax'] = fig_vax
-
-    '''
-    view['Percent_fully_vaccinated'].to_numpy()[0] - view['total_individuals_3doses'].fillna(0).to_numpy()[0], \
-                                                                            view['total_individuals_at_least_one'].to_numpy()[0] - view['Tot Vaxed'].to_numpy()[0],\
-                                                                            view['total_individuals_3doses'].fillna(0).to_numpy()[0]
-    '''
 
     # Hospitalization Area Charts
     hosp_area_view = data_dict['hosp_vax'][data_dict['hosp_vax']['date'] > now - pd.Timedelta(days=180)]
@@ -183,7 +218,7 @@ def create_maps (data_dict: dict, fig_dict: dict):
     merged_tests_view = pd.merge(data_dict['phu_match'], tests_view, how="left", left_on="PHU_ID", right_on="PHU_num") 
 
     phu_map['Active Cases'] = merged_cases_view['ACTIVE_CASES'] 
-    phu_map['Active Case Rate'] = merged_cases_view['ACTIVE_CASES'] / merged_cases_view['POP']
+    phu_map['Active Case Rate (Per 100k)'] = merged_cases_view['ACTIVE_CASES'] / merged_cases_view['POP'] * 100000
 
     phu_map['PHU'] = merged_cases_view['NAME_ENG']
     phu_map['Test Positive Rate'] = merged_tests_view['percent_positive_7d_avg']
@@ -209,8 +244,8 @@ def create_maps (data_dict: dict, fig_dict: dict):
         dragmode=False)
 
     map_cases_rate = px.choropleth(phu_map, geojson=phu_map.geometry, 
-                        locations="id", color="Active Case Rate", 
-                        hover_data={'PHU':True, 'Active Case Rate':True, 'id':False},
+                        locations="id", color="Active Case Rate (Per 100k)", 
+                        hover_data={'PHU':True, 'Active Case Rate (Per 100k)':True, 'id':False},
                         fitbounds="locations",
                         height=750,
                         color_continuous_scale="ylorrd")
@@ -219,7 +254,7 @@ def create_maps (data_dict: dict, fig_dict: dict):
 
     map_cases_rate.update_layout(
         title=dict(x=0.5),
-        title_text='Active Case Rate by PHU',
+        title_text='Active Case Rate (Per 100k) by PHU',
         margin={"r":0,"t":30,"l":0,"b":10},
         coloraxis={"colorbar":{"title":{"text":""}},
                    "showscale": False},
