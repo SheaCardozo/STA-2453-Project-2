@@ -85,7 +85,7 @@ cases_page = dbc.Container([
                     dbc.Col(change_card(data=data_dict['cases_tl'], col='New Deaths', date_col='Reported Date', title="New Deaths", color_invert=True), width='auto')
                     ]),
                 dbc.Row([
-                    dbc.Col(html.H2("New COVID-19 Cases by PHU"), width='auto'), 
+                    dbc.Col(html.H2("Active COVID-19 Cases by PHU"), width='auto'), 
                     ], style={"margin-top": "32px"}),
                 html.Hr(),
                 dbc.Tabs(
