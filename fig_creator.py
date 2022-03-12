@@ -1,8 +1,9 @@
-import pandas as pd
-import plotly.express as px
 import numpy as np
-import plotly.graph_objects as go
+import pandas as pd
+
 import plotly 
+import plotly.express as px
+import plotly.graph_objects as go
 
 def create_fig_dict (data_dict: dict):
     '''
@@ -46,7 +47,7 @@ def create_fig_dict (data_dict: dict):
 
     # Cases Ratio Charts
     cases_vaxed = data_dict['cases_vaxed']
-    cases_vaxed['ratio'] = cases_vaxed['cases_full_vac_rate_per100K']/cases_vaxed['cases_unvac_rate_per100K']
+    cases_vaxed['ratio'] = cases_vaxed['cases_full_vac_rate_per100K'] / cases_vaxed['cases_unvac_rate_per100K']
     cases_vaxed_view = cases_vaxed[cases_vaxed['Date'] > now - pd.Timedelta(days=180)]
 
     cases_vaxed_unvac = pd.DataFrame(data={"Date": cases_vaxed_view['Date']}, columns=['Date'])
@@ -61,14 +62,8 @@ def create_fig_dict (data_dict: dict):
     cases_vaxed_fullvac["Rate Type"] = "Fully Vaccinated"
     cases_vaxed_fullvac["Rate (Per 100k)"] = cases_vaxed['cases_full_vac_rate_per100K']
 
-    '''
-    fig_vax_ratio_time = px.line(view2, x="Date", y="ratio", \
-        labels={
-                     "ratio": "Comparative Rate"
-                 },)
-    '''
-
-    fig_vax_ratio_time = px.line(pd.concat((cases_vaxed_unvac, cases_vaxed_partvac, cases_vaxed_fullvac)), x="Date", y="Rate (Per 100k)", color="Rate Type",
+    fig_vax_ratio_time = px.line(pd.concat((cases_vaxed_unvac, cases_vaxed_partvac, cases_vaxed_fullvac)), \
+        x="Date", y="Rate (Per 100k)", color="Rate Type",
             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                 'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                 'Fully Vaccinated': px.colors.qualitative.Plotly[0]})
@@ -95,22 +90,26 @@ def create_fig_dict (data_dict: dict):
     hosp_vax_nonicu_view = hosp_vax_nonicu_view.rename(columns={ hosp_vax_nonicu_view.columns[0]: "Hospitalizations" })
     hosp_vax_nonicu_view["Vaccination Status"] = ["Unvaccinated", "Partially Vaccinated", "Fully Vaccinated"]
 
-    fig_hosp_vax_tot = px.pie(hosp_vax_tot_view, values="Hospitalizations", names="Vaccination Status", color="Vaccination Status", title='Vaccination Status of all Hospitalizations', \
+    fig_hosp_vax_tot = px.pie(hosp_vax_tot_view, values="Hospitalizations", names="Vaccination Status", \
+        color="Vaccination Status", title='Vaccination Status of all Hospitalizations', \
              color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
                                  'Boosted' :px.colors.qualitative.Plotly[2]})
-    fig_hosp_vax_icu = px.pie(hosp_vax_icu_view, values="Hospitalizations", names="Vaccination Status", color="Vaccination Status", title='Vaccination Status of ICU Hospitalizations', \
+    fig_hosp_vax_icu = px.pie(hosp_vax_icu_view, values="Hospitalizations", names="Vaccination Status", \
+        color="Vaccination Status", title='Vaccination Status of ICU Hospitalizations', \
              color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
                                  'Boosted' :px.colors.qualitative.Plotly[2]})
-    fig_hosp_vax_nonicu = px.pie(hosp_vax_nonicu_view, values="Hospitalizations", names="Vaccination Status", color="Vaccination Status", title='Vaccination Status of Non-ICU Hospitalizations', \
+    fig_hosp_vax_nonicu = px.pie(hosp_vax_nonicu_view, values="Hospitalizations", names="Vaccination Status", \
+        color="Vaccination Status", title='Vaccination Status of Non-ICU Hospitalizations', \
              color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
                                  'Boosted' :px.colors.qualitative.Plotly[2]})
-    fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Count", names="Vaccination Status", color="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270, \
+    fig_hosp_general_pop = px.pie(hosp_vax_stat_tot_view, values="Count", names="Vaccination Status", \
+        color="Vaccination Status", title='Overall Ontario Vaccination Status (Ages 12+)', height=270, \
              color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
@@ -150,7 +149,8 @@ def create_fig_dict (data_dict: dict):
     vax_age = data_dict['vax_age']
     vax_age_view = vax_age[vax_age['Date'] > now - pd.Timedelta(days=1)]
     groups =['05-11yrs', '12-17yrs', '18-29yrs', '30-39yrs','40-49yrs','50-59yrs','60-69yrs','70-79yrs', '80+']
-    groupnm =['5-11 Year Olds', '12-17 Year Olds', '18-29 Year Olds', '30-39 Year Olds','40-49 Year Olds','50-59 Year Olds','60-69 Year Olds','70-79 Year Olds', '80+ Year Olds']
+    groupnm =['5-11 Year Olds', '12-17 Year Olds', '18-29 Year Olds', '30-39 Year Olds', \
+        '40-49 Year Olds','50-59 Year Olds','60-69 Year Olds','70-79 Year Olds', '80+ Year Olds']
 
     for gp in range(len(groups)):
         view_age_view_gp = vax_age_view[vax_age_view['Agegroup'] == groups[gp]]

@@ -1,8 +1,9 @@
-from dash import html
-import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 import locale
+
+from dash import html
+import dash_bootstrap_components as dbc
 
 def suffix(d):
     return 'th' if 11<=d<=13 else {1:'st',2:'nd',3:'rd'}.get(d%10, 'th')
@@ -57,8 +58,10 @@ def change_card(data, col, date_col, title, color_invert=False, percentage=False
                 html.Hr(style={"margin": "8px"}),
                 dbc.Row([dbc.Col(html.H1(curr_str+per), width="auto")], justify="center"),
                 dbc.Row([dbc.Col(html.Div(), width=4),
-                         dbc.Col(dbc.Row(dbc.Col(html.H5(chg_str, style={"margin": "0px"}), width="auto"), justify="center"), width=4, style={"padding": "1px"}, align="end"),
-                         dbc.Col(dbc.Row(dbc.Col(html.Img(src=asset, style={"width": "10px"}), width="auto"), justify="start"), width=4, style={"padding": "1px"}, align="center")], justify="start"),
+                         dbc.Col(dbc.Row(dbc.Col(html.H5(chg_str, style={"margin": "0px"}), width="auto"), \
+                             justify="center"), width=4, style={"padding": "1px"}, align="end"),
+                         dbc.Col(dbc.Row(dbc.Col(html.Img(src=asset, style={"width": "10px"}), width="auto"), \
+                             justify="start"), width=4, style={"padding": "1px"}, align="center")], justify="start"),
             ]
         ),
     ],

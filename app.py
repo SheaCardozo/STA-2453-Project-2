@@ -46,7 +46,6 @@ sidebar = html.Div(
         ),
         dbc.Nav(
             [
-                #dbc.NavLink("Main", href="/", active="exact"),
                 dbc.NavLink("Cases", href="/", active="exact"),
                 dbc.NavLink("Hospitalizations", href="/hospitalizations", active="exact"),
                 dbc.NavLink("Testing", href="/testing", active="exact"),
@@ -70,9 +69,12 @@ cases_page = dbc.Container([
                     ]),
                 html.Hr(),
                 dbc.Row([
-                    dbc.Col(change_card(data=data_dict['cases_tl'], col='ACTIVE_CASES', date_col='Reported Date', title="Active Cases", color_invert=True), width='auto'), 
-                    dbc.Col(change_card(data=data_dict['cases_tl'], col='New Cases', date_col='Reported Date', title="New Cases", color_invert=True), width='auto'),
-                    dbc.Col(change_card(data=data_dict['cases_tl'], col='New Deaths', date_col='Reported Date', title="New Deaths", color_invert=True), width='auto')
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='ACTIVE_CASES', date_col='Reported Date', \
+                        title="Active Cases", color_invert=True), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='New Cases', date_col='Reported Date', \
+                        title="New Cases", color_invert=True), width='auto'),
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='New Deaths', date_col='Reported Date', \
+                        title="New Deaths", color_invert=True), width='auto')
                     ]),
                 dbc.Row([
                     dbc.Col(html.H2("Active COVID-19 Cases by PHU"), width='auto'), 
@@ -106,8 +108,10 @@ tests_page = dbc.Container([
                     ]),
                 html.Hr(),
                 dbc.Row([
-                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Total tests completed in the last day', date_col='Reported Date', title="Test Volume", color_invert=False), width='auto'), 
-                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Percent positive tests in last day', date_col='Reported Date', title="Positive Test Rate", color_invert=True, percentage=True), width='auto'),
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Total tests completed in the last day', \
+                        date_col='Reported Date', title="Test Volume", color_invert=False), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Percent positive tests in last day', \
+                        date_col='Reported Date', title="Positive Test Rate", color_invert=True, percentage=True), width='auto'),
                     ]),
                  dbc.Row([
                     dbc.Col(html.H2("COVID-19 Testing Over Time", style={"margin-top": "32px"}), width='auto'), 
@@ -144,9 +148,12 @@ vaccine_page = dbc.Container([
                     ]),
                 html.Hr(),
                 dbc.Row([
-                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_partially', date_col='report_date', title="Partially Vaccinated", color_invert=False, percentage=True), width='auto'), 
-                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_fully', date_col='report_date', title="Fully Vaccinated", color_invert=False, percentage=True), width='auto'),
-                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_boosted', date_col='report_date', title="Boosted", color_invert=False, percentage=True), width='auto')
+                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_partially', date_col='report_date', \
+                        title="Partially Vaccinated", color_invert=False, percentage=True), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_fully', date_col='report_date', \
+                        title="Fully Vaccinated", color_invert=False, percentage=True), width='auto'),
+                    dbc.Col(change_card(data=data_dict['vax_stat'], col='per_boosted', date_col='report_date', \
+                        title="Boosted", color_invert=False, percentage=True), width='auto')
                     ]),
                 dbc.Row([
                     dbc.Col(html.H2("COVID-19 Vaccination Over Time", style={"margin-top": "32px"}), width='auto'), 
@@ -206,8 +213,6 @@ hosp_page = dbc.Container([
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
-    #if pathname == "/":
-        #return main_page
     if pathname == "/":
         return cases_page
     elif pathname == "/hospitalizations":
