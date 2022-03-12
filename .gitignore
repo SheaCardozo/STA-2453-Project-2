@@ -132,3 +132,4 @@ dmypy.json
 .idea/
 data/*.csv
 data/*.txt
+.DS_Store/

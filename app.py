@@ -98,8 +98,16 @@ cases_page = dbc.Container([
                           figure=fig_dict['fig_vax_ratio_time'])])
 
 tests_page = dbc.Container([
+                dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Testing Today"), width='auto'), 
+                    ]),
+                html.Hr(),
+                dbc.Row([
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Total tests completed in the last day', date_col='Reported Date', title="Test Volume", color_invert=False), width='auto'), 
+                    dbc.Col(change_card(data=data_dict['cases_tl'], col='Percent positive tests in last day', date_col='Reported Date', title="Positive Test Rate", color_invert=True, percentage=True), width='auto'),
+                    ]),
                  dbc.Row([
-                    dbc.Col(html.H2("COVID-19 Testing Over Time"), width='auto'), 
+                    dbc.Col(html.H2("COVID-19 Testing Over Time", style={"margin-top": "32px"}), width='auto'), 
                     ]),
                 html.Hr(),
                 dcc.Graph(id='tests_hosp_area',

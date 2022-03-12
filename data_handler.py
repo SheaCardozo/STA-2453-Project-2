@@ -103,7 +103,8 @@ def data_transforms (data_dict):
 
     data_dict['cases_tl']['Reported Date'] = pd.to_datetime(data_dict['cases_tl']['Reported Date'], format='%Y-%m-%d')
     data_dict['cases_tl']['Tests'] = data_dict['cases_tl']['Total tests completed in the last day']
-    data_dict['cases_tl']['Positive Tests'] = data_dict['cases_tl']['Total tests completed in the last day'] * data_dict['cases_tl']['Percent positive tests in last day']/100
+    data_dict['cases_tl']['Percent positive tests in last day'] = data_dict['cases_tl']['Percent positive tests in last day'] / 100
+    data_dict['cases_tl']['Positive Tests'] = data_dict['cases_tl']['Total tests completed in the last day'] * data_dict['cases_tl']['Percent positive tests in last day']
     data_dict['cases_tl']['New Cases'] = np.concatenate((np.array([np.nan]), data_dict['cases_tl']['Total Cases'].to_numpy()[1:] - data_dict['cases_tl']['Total Cases'].to_numpy()[:-1]))
     data_dict['cases_tl']['New Deaths'] = np.concatenate((np.array([np.nan]), data_dict['cases_tl']['Deaths'].to_numpy()[1:] - data_dict['cases_tl']['Deaths'].to_numpy()[:-1]))
 
