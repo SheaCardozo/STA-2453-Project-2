@@ -6,3 +6,4 @@ pandas
 geopandas
 plotly
 whitenoise 
+gunicorn
