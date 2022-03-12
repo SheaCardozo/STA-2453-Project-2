@@ -126,7 +126,13 @@ tests_page = dbc.Container([
             id="tests-tabs",
             active_tab="map_ont_test_count",
         ),
-                dbc.Spinner(children=html.Div(id="tests-tab-content", className="p-4"), color="primary"),
+        dbc.Spinner(children=html.Div(id="tests-tab-content", className="p-4"), color="primary"),
+        dbc.Row([
+            dbc.Col(html.H2("COVID-19 Positive Test Rate by Age Group (7 Day Average)"), width='auto'), 
+            ]),
+        html.Hr(),
+        dcc.Graph(id='fig_tests_age',
+            figure=fig_dict['fig_tests_age']),
 ])
 
 vaccine_page = dbc.Container([

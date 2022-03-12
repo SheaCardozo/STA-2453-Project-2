@@ -194,6 +194,19 @@ def create_fig_dict (data_dict: dict):
     tests_area_view_pos['Type'] = "Positive Tests"
     tests_area_view_pos['Count'] = data_dict['cases_tl']['Positive Tests']
 
+    tests_age = data_dict['tests_age']
+    tests_age_view = tests_age[tests_age['DATE'] > now - pd.Timedelta(days=180)]
+
+    fig_tests_age = px.line(tests_age_view, x="DATE", y="percent_positive_7d_avg", color='age_category', \
+                labels={
+                     "DATE": "Date",
+                     "age_category": "Age Category",
+                     "percent_positive_7d_avg": "% Positive (7 Day Average)"
+                 },)
+
+    fig_dict['fig_tests_age'] = fig_tests_age
+
+
     tests_hosp_area = px.area(pd.concat([tests_area_view_pos,tests_area_view_overall], ignore_index=True), x="Date",
                             y='Count', color="Type",
                             line_group="Type")

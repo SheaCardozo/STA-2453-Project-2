@@ -16,7 +16,8 @@ key_dict = {
     "vax_stat": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=8a89caa9-511c-4568-af89-7f2174b4378c&limit=1000000",
     "vax_age": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=775ca815-5028-4e9b-9dd4-6975ff1be021&limit=1000000",
     "hosp_vax": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=274b819c-5d69-4539-a4db-f2950794138c&limit=1000000",
-    "tests_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=07bc0e21-26b5-4152-b609-c1958cb7b227&limit=1000000"}
+    "tests_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=07bc0e21-26b5-4152-b609-c1958cb7b227&limit=1000000",
+    "tests_age": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=05214a0d-d8d9-4ea4-8d2a-f6e3833ba471&limit=1000000"}
 
 def pull_data():
     '''
@@ -131,5 +132,15 @@ def data_transforms (data_dict):
     data_dict['cases_tl'] = pd.merge(data_dict['cases_tl'], cases_phu, how='left', left_on='Reported Date', right_on='FILE_DATE')
     data_dict['tests_phu']['DATE'] = pd.to_datetime(data_dict['tests_phu']['DATE'], format='%Y-%m-%d')
     data_dict['tests_phu']['test_volumes_7d_avg'] = data_dict['tests_phu']['test_volumes_7d_avg'].apply(lambda x: int(x.replace(',', '')))
+
+    data_dict['tests_age']['DATE'] = pd.to_datetime(data_dict['tests_age']['DATE'], format='%Y-%m-%d')
+
+    tests_age_key = {"0to13": "0 to 13 Years Old",
+                        "14to17": "14 to 17 Years Old",
+                        "18to24": "18 to 24 Years Old",
+                        "25to64": "25 to 64 Years Old",
+                        "65+": "65+ Years Old"}
+
+    data_dict['tests_age']['age_category'] = data_dict['tests_age']['age_category'].apply(lambda x: tests_age_key[x])
 
     return data_dict
