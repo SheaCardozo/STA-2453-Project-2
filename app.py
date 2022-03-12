@@ -27,6 +27,8 @@ CONTENT_STYLE = {
 }
 
 app = Dash(external_stylesheets=[dbc.themes.SPACELAB], suppress_callback_exceptions=True)
+app.title = "Ontario COVID-19 Dashboard"
+server = app.server
 
 data_dict = pull_data()
 assert data_dict is not None
@@ -264,5 +266,4 @@ def render_tab_content(active_tab):
     return "No tab selected"
 
 if __name__ == '__main__':
-    app.title = "Ontario COVID-19 Dashboard"
-    app.run_server(debug=True)
+    app.run_server(debug=False)
