@@ -21,16 +21,7 @@ def create_fig_dict (data_dict: dict):
 
     death_area_view = pd.DataFrame(data={"Date": view[1:]['Reported Date']}, columns=['Date'])
     death_area_view['Type'] = "Deaths"
-    death_area_view['Value'] = view['Deaths'].to_numpy()[1:] - view['Deaths'].to_numpy()[:-1]
-
-
-    fig_case_area = px.area(pd.concat([case_area_view], ignore_index=True), x="Date",
-                            y='Value', color="Type",
-                            line_group="Type")
-
-    fig_death_area = px.area(pd.concat([death_area_view], ignore_index=True), x="Date",
-                            y='Value', color="Type",
-                            line_group="Type")
+    death_area_view['Value'] = view['New Deaths']
 
     cases2 = data_dict['cases_vaxed']
     view2 = cases2[cases2['Date'] > now - pd.Timedelta(days=180)]
@@ -56,11 +47,6 @@ def create_fig_dict (data_dict: dict):
         secondary_y=True,
     )
 
-    fig_cases_death_area.update_layout(
-        title_text="Active COVID-19 Cases and Deaths Over Time"
-    )
-    
-
     # Set x-axis title
     fig_cases_death_area.update_xaxes(title_text="Date")
 
@@ -69,7 +55,6 @@ def create_fig_dict (data_dict: dict):
     fig_cases_death_area.update_yaxes(title_text="New Deaths", secondary_y=True, rangemode="tozero", range=[0, max(death_area_view['Value'])*1.1])
 
     fig_dict['fig_cases_death_area'] = fig_cases_death_area
-    fig_dict['fig_death_area'] = fig_death_area
     fig_dict['fig_vax_ratio_time'] = fig_vax_ratio_time
 
     # Hospitalization Pie Charts

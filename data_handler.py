@@ -108,7 +108,7 @@ def data_transforms (data_dict):
     data_dict['cases_tl']['Positive Tests'] = data_dict['cases_tl']['Total tests completed in the last day'] * data_dict['cases_tl']['Percent positive tests in last day']
     data_dict['cases_tl']['New Cases'] = np.concatenate((np.array([np.nan]), data_dict['cases_tl']['Total Cases'].to_numpy()[1:] - data_dict['cases_tl']['Total Cases'].to_numpy()[:-1]))
     data_dict['cases_tl']['New Deaths'] = np.concatenate((np.array([np.nan]), data_dict['cases_tl']['Deaths'].to_numpy()[1:] - data_dict['cases_tl']['Deaths'].to_numpy()[:-1]))
-
+    data_dict['cases_tl']['New Deaths'] = data_dict['cases_tl']['New Deaths'].apply(lambda x: x if x >= 0 else np.nan)
     data_dict['cases_vaxed']['Date'] = pd.to_datetime(data_dict['cases_vaxed']['Date'], format='%Y-%m-%d')
 
     data_dict['cases_vaxed']['Tot Cases'] = data_dict['cases_vaxed']['covid19_cases_unvac'] + data_dict['cases_vaxed']['covid19_cases_partial_vac'] +\

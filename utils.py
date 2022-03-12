@@ -35,12 +35,9 @@ def change_card(data, col, date_col, title, color_invert=False, percentage=False
         change_a = change_a * 100
         curr_str = str(round(curr, 1))
         chg_str = str(round(change_a, 2))
-    elif not np.isnan(curr):
-        curr_str = locale.format("%d", curr, grouping=True)
-        chg_str = locale.format("%d", change_a, grouping=True)
     else:
-        curr_str = "N/A"
-        chg_str = "N/A"
+        curr_str = locale.format("%d", curr, grouping=True) if not np.isnan(curr) else "N/A"
+        chg_str = locale.format("%d", change_a, grouping=True) if not np.isnan(change_a) else "N/A"
 
     if color_invert:
         color_list.reverse()
