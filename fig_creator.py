@@ -222,6 +222,8 @@ def create_maps (data_dict: dict, fig_dict: dict):
 
     phu_map['PHU'] = merged_cases_view['NAME_ENG']
     phu_map['Test Positive Rate'] = merged_tests_view['percent_positive_7d_avg']
+    phu_map['Testing Volume'] = merged_tests_view['test_volumes_7d_avg']
+    phu_map['Testing Rate (Per 1000)'] = merged_tests_view['tests_per_1000_7d_avg']
     phu_map['id'] = phu_map.index
 
     phu_map = phu_map.to_crs(epsg=4326)
@@ -260,18 +262,56 @@ def create_maps (data_dict: dict, fig_dict: dict):
                    "showscale": False},
         dragmode=False)
 
-    map_ont_test = px.choropleth(phu_map, geojson=phu_map.geometry, 
+
+    map_ont_test_count = px.choropleth(phu_map, geojson=phu_map.geometry, 
+                        locations="id", color="Testing Volume", 
+                        hover_data={'PHU':True, 'Testing Volume':True, 'id':False},
+                        fitbounds="locations",
+                        height=750,
+                        color_continuous_scale="bugn")
+
+    map_ont_test_count.update_geos(resolution=110)
+
+    map_ont_test_count.update_layout(
+        title=dict(x=0.5),
+        title_text='Testing Volume by PHU',
+        margin={"r":0,"t":30,"l":0,"b":10},
+        coloraxis={"colorbar":{"title":{"text":""}},
+                   "showscale": False},
+        dragmode=False)
+
+
+    map_ont_test_rate = px.choropleth(phu_map, geojson=phu_map.geometry, 
+                        locations="id", color="Testing Rate (Per 1000)", 
+                        hover_data={'PHU':True, 'Testing Rate (Per 1000)':True, 'id':False},
+                        fitbounds="locations",
+                        height=750,
+                        color_continuous_scale="bugn")
+
+    map_ont_test_rate.update_geos(resolution=110)
+
+    map_ont_test_rate.update_layout(
+        title=dict(x=0.5),
+        title_text='Testing Rate (Per 1000) by PHU',
+        margin={"r":0,"t":30,"l":0,"b":10},
+        coloraxis={"colorbar":{"title":{"text":""}},
+                   "showscale": False},
+        dragmode=False)
+
+
+
+    map_ont_test_tpr = px.choropleth(phu_map, geojson=phu_map.geometry, 
                         locations="id", color="Test Positive Rate", 
                         hover_data={'PHU':True, 'Test Positive Rate':True, 'id':False},
                         fitbounds="locations",
                         height=750,
-                        color_continuous_scale="Viridis")
+                        color_continuous_scale="ylorrd")
 
-    map_ont_test.update_geos(resolution=110)
+    map_ont_test_tpr.update_geos(resolution=110)
 
-    map_ont_test.update_layout(
+    map_ont_test_tpr.update_layout(
         title=dict(x=0.5),
-        title_text='Tests Positive Rate by PHU',
+        title_text='Test Positive Rate by PHU',
         margin={"r":0,"t":30,"l":0,"b":10},
         coloraxis={"colorbar":{"title":{"text":""}},
                    "showscale": False},
@@ -279,7 +319,9 @@ def create_maps (data_dict: dict, fig_dict: dict):
 
     fig_dict['map_cases_count'] = map_cases_count
     fig_dict['map_cases_rate'] = map_cases_rate
-    fig_dict['map_ont_test'] = map_ont_test
+    fig_dict['map_ont_test_tpr'] = map_ont_test_tpr
+    fig_dict['map_ont_test_count'] = map_ont_test_count
+    fig_dict['map_ont_test_rate'] = map_ont_test_rate
 
 
     return fig_dict

@@ -85,7 +85,7 @@ cases_page = dbc.Container([
                     id="cases-tabs",
                     active_tab="map_cases_count",
                 ),
-                dcc.Loading(id="cases-loading-content", type="default", children=html.Div(id="cases-tab-content", className="p-4")),
+                dbc.Spinner(children=html.Div(id="cases-tab-content", className="p-4"), color="primary"),
                 dbc.Row([
                     dbc.Col(html.H2("Active COVID-19 Cases and Deaths Over Time"), width='auto'), 
                     ]),
@@ -104,14 +104,21 @@ tests_page = dbc.Container([
                 html.Hr(),
                 dcc.Graph(id='tests_hosp_area',
                           figure=fig_dict['tests_hosp_area']),
+            dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Testing by PHU", style={"margin-top": "32px"}), width='auto'), 
+                    ]),
+                html.Hr(),
             dbc.Tabs(
             [
-                dbc.Tab(label="Positive Test Rate", tab_id="map_ont_test"),
+                dbc.Tab(label="Count", tab_id="map_ont_test_count"),
+                dbc.Tab(label="Rate", tab_id="map_ont_test_rate"),
+                dbc.Tab(label="Positive Rate", tab_id="map_ont_test_tpr"),
+
             ],
             id="tests-tabs",
-            active_tab="map_ont_test",
+            active_tab="map_ont_test_count",
         ),
-        dcc.Loading(id="tests-loading-content", type="default", children=html.Div(id="tests-tab-content", className="p-4")),
+                dbc.Spinner(children=html.Div(id="tests-tab-content", className="p-4"), color="primary"),
 ])
 
 vaccine_page = dbc.Container([
@@ -241,4 +248,5 @@ def render_tab_content(active_tab):
     return "No tab selected"
 
 if __name__ == '__main__':
+    app.title = "Ontario COVID-19 Dashboard"
     app.run_server(debug=True)

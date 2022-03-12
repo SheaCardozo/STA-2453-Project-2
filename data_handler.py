@@ -129,5 +129,6 @@ def data_transforms (data_dict):
 
     data_dict['cases_tl'] = pd.merge(data_dict['cases_tl'], cases_phu, how='left', left_on='Reported Date', right_on='FILE_DATE')
     data_dict['tests_phu']['DATE'] = pd.to_datetime(data_dict['tests_phu']['DATE'], format='%Y-%m-%d')
+    data_dict['tests_phu']['test_volumes_7d_avg'] = data_dict['tests_phu']['test_volumes_7d_avg'].apply(lambda x: int(x.replace(',', '')))
 
     return data_dict
