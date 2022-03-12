@@ -3,7 +3,6 @@
 
 from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
-from whitenoise import WhiteNoise
 
 from data_handler import pull_data
 from fig_creator import create_fig_dict
@@ -29,9 +28,6 @@ CONTENT_STYLE = {
 
 app = Dash(external_stylesheets=[dbc.themes.SPACELAB], suppress_callback_exceptions=True)
 app.title = "Ontario COVID-19 Dashboard"
-
-server = app.server
-server.wsgi_app = WhiteNoise(server.wsgi_app, root='static/')
 
 data_dict = pull_data()
 assert data_dict is not None
@@ -269,4 +265,4 @@ def render_tab_content(active_tab):
     return "No tab selected"
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

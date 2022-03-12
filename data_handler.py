@@ -27,20 +27,20 @@ def pull_data():
     now = date.today()
     last = None
 
-    if os.path.exists("/data/last_pull.txt"):
-        with open("/data/last_pull.txt", 'r') as f:
+    if os.path.exists("./data/last_pull.txt"):
+        with open("./data/last_pull.txt", 'r') as f:
             last = date.fromisoformat(f.readline())
 
     if last is not None and now <= last:
         data_dict = pull_data_from_files()
     else:
         data_dict = pull_data_from_api()
-        with open("/data/last_pull.txt", 'w') as f:
+        with open("./data/last_pull.txt", 'w') as f:
             f.write(now.isoformat())
 
 
-    phu_match = pd.read_csv("/shapefiles/phu-id-match.csv")
-    phu_map = gpd.read_file("/shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
+    phu_match = pd.read_csv("./shapefiles/phu-id-match.csv")
+    phu_map = gpd.read_file("./shapefiles/MOH_PHU_BOUNDARY.shp").set_crs(epsg=4326)
 
     data_dict['phu_map'] = phu_map
     data_dict['phu_match'] = phu_match
@@ -67,7 +67,7 @@ def pull_data_from_api():
         data_dict[key] = pd.read_json(io.getvalue(), orient='records')
 
     for key in data_dict:
-        data_dict[key].to_csv(f"/data/{key}.csv", index=False)
+        data_dict[key].to_csv(f"./data/{key}.csv", index=False)
 
     return data_dict
 
@@ -79,7 +79,7 @@ def pull_data_from_files():
     data_dict = {}
 
     for key, key_url in key_dict.items():
-        data_dict[key] = pd.read_csv(f"/data/{key}.csv")
+        data_dict[key] = pd.read_csv(f"./data/{key}.csv")
 
     return data_dict
 
