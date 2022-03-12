@@ -12,28 +12,16 @@ def create_fig_dict (data_dict: dict):
     now = pd.Timestamp.now()
 
     # Cases Area Charts
-    cases = data_dict['cases_tl']
-    view = cases[cases['Reported Date'] > now - pd.Timedelta(days=181)]
+    cases_tl = data_dict['cases_tl']
+    cases_tl_view = cases_tl[cases_tl['Reported Date'] > now - pd.Timedelta(days=181)]
 
-    case_area_view = pd.DataFrame(data={"Date": view[1:]['Reported Date']}, columns=['Date'])
+    case_area_view = pd.DataFrame(data={"Date": cases_tl_view[1:]['Reported Date']}, columns=['Date'])
     case_area_view['Type'] = "Total Cases"
-    case_area_view['Value'] = view['ACTIVE_CASES'].to_numpy()[1:]# - view['Total Cases'].to_numpy()[:-1]
+    case_area_view['Value'] = cases_tl_view['ACTIVE_CASES'].to_numpy()[1:]
 
-    death_area_view = pd.DataFrame(data={"Date": view[1:]['Reported Date']}, columns=['Date'])
+    death_area_view = pd.DataFrame(data={"Date": cases_tl_view[1:]['Reported Date']}, columns=['Date'])
     death_area_view['Type'] = "Deaths"
-    death_area_view['Value'] = view['New Deaths']
-
-    cases2 = data_dict['cases_vaxed']
-    view2 = cases2[cases2['Date'] > now - pd.Timedelta(days=180)]
-
-    cases3 = data_dict['vax_stat']
-    view3 = cases3[cases3['Date'] > now - pd.Timedelta(days=180)]
-
-    view4 = pd.merge(view3, view2, on=['Date'])
-    view4['ratio'] = (view4['covid19_cases_full_vac']/view4['Tot Vaxed'])/(view4['covid19_cases_unvac']/view4['UnVaxed'])
-
-    fig_vax_ratio_time = px.line(view4, x="Date", y="ratio",
-                            title='Ratio of Ratio of Fully Vaxed cases to Ratio of UnVaxed cases')
+    death_area_view['Value'] = cases_tl_view['New Deaths']
 
     fig_cases_death_area = plotly.subplots.make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -55,6 +43,36 @@ def create_fig_dict (data_dict: dict):
     fig_cases_death_area.update_yaxes(title_text="New Deaths", secondary_y=True, rangemode="tozero", range=[0, max(death_area_view['Value'])*1.1])
 
     fig_dict['fig_cases_death_area'] = fig_cases_death_area
+
+    # Cases Ratio Charts
+    cases_vaxed = data_dict['cases_vaxed']
+    cases_vaxed['ratio'] = cases_vaxed['cases_full_vac_rate_per100K']/cases_vaxed['cases_unvac_rate_per100K']
+    cases_vaxed_view = cases_vaxed[cases_vaxed['Date'] > now - pd.Timedelta(days=180)]
+
+    cases_vaxed_unvac = pd.DataFrame(data={"Date": cases_vaxed_view['Date']}, columns=['Date'])
+    cases_vaxed_unvac["Rate Type"] = "Unvaccinated"
+    cases_vaxed_unvac["Rate (Per 100k)"] = cases_vaxed['cases_unvac_rate_per100K']
+
+    cases_vaxed_partvac = pd.DataFrame(data={"Date": cases_vaxed_view['Date']}, columns=['Date'])
+    cases_vaxed_partvac["Rate Type"] = "Partially Vaccinated"
+    cases_vaxed_partvac["Rate (Per 100k)"] = cases_vaxed['cases_partial_vac_rate_per100K']
+
+    cases_vaxed_fullvac = pd.DataFrame(data={"Date": cases_vaxed_view['Date']}, columns=['Date'])
+    cases_vaxed_fullvac["Rate Type"] = "Fully Vaccinated"
+    cases_vaxed_fullvac["Rate (Per 100k)"] = cases_vaxed['cases_full_vac_rate_per100K']
+
+    '''
+    fig_vax_ratio_time = px.line(view2, x="Date", y="ratio", \
+        labels={
+                     "ratio": "Comparative Rate"
+                 },)
+    '''
+
+    fig_vax_ratio_time = px.line(pd.concat((cases_vaxed_unvac, cases_vaxed_partvac, cases_vaxed_fullvac)), x="Date", y="Rate (Per 100k)", color="Rate Type",
+            color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
+                                'Partially Vaccinated': px.colors.qualitative.Plotly[3],
+                                'Fully Vaccinated': px.colors.qualitative.Plotly[0]})
+
     fig_dict['fig_vax_ratio_time'] = fig_vax_ratio_time
 
     # Hospitalization Pie Charts
@@ -106,20 +124,20 @@ def create_fig_dict (data_dict: dict):
     fig_dict['fig_hosp_general_pop'] = fig_hosp_general_pop
 
     # Vaccination Area Charts
-    vax = data_dict['vax_stat']
-    view3 = vax[vax['Date'] > now - pd.Timedelta(days=180)]
+    vax_stat = data_dict['vax_stat']
+    vax_stat_view = vax_stat[vax_stat['Date'] > now - pd.Timedelta(days=180)]
 
-    part_area_view = pd.DataFrame(data={"Date": view3['Date']}, columns=['Date'])
+    part_area_view = pd.DataFrame(data={"Date": vax_stat_view['Date']}, columns=['Date'])
     part_area_view['Vaccination Status'] = "Partially Vaccinated"
-    part_area_view['Percentage'] = (vax['total_individuals_at_least_one'] - vax['Tot Vaxed']) / 14826276
+    part_area_view['Percentage'] = (vax_stat['total_individuals_at_least_one'] - vax_stat['Tot Vaxed']) / 14826276
 
-    fully_area_view = pd.DataFrame(data={"Date": view3['Date']}, columns=['Date'])
+    fully_area_view = pd.DataFrame(data={"Date": vax_stat_view['Date']}, columns=['Date'])
     fully_area_view['Vaccination Status'] = "Fully Vaccinated"
-    fully_area_view['Percentage'] = (vax['Tot Vaxed'] - vax['total_individuals_3doses'].fillna(0)) / 14826276
+    fully_area_view['Percentage'] = (vax_stat['Tot Vaxed'] - vax_stat['total_individuals_3doses'].fillna(0)) / 14826276
 
-    boosted_area_view = pd.DataFrame(data={"Date": view3['Date']}, columns=['Date'])
+    boosted_area_view = pd.DataFrame(data={"Date": vax_stat_view['Date']}, columns=['Date'])
     boosted_area_view['Vaccination Status'] = "Boosted"
-    boosted_area_view['Percentage'] = vax['total_individuals_3doses'] / 14826276
+    boosted_area_view['Percentage'] = vax_stat['total_individuals_3doses'] / 14826276
     
 
     fig_vax = px.area(pd.concat((part_area_view, fully_area_view, boosted_area_view)), x="Date", y="Percentage", color='Vaccination Status', \
@@ -128,18 +146,19 @@ def create_fig_dict (data_dict: dict):
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
                                  'Boosted' :px.colors.qualitative.Plotly[2]})
 
+    # Vaccination Pie Charts
     vax_age = data_dict['vax_age']
-    view3 = vax_age[vax_age['Date'] > now - pd.Timedelta(days=1)]
+    vax_age_view = vax_age[vax_age['Date'] > now - pd.Timedelta(days=1)]
     groups =['05-11yrs', '12-17yrs', '18-29yrs', '30-39yrs','40-49yrs','50-59yrs','60-69yrs','70-79yrs', '80+']
     groupnm =['5-11 Year Olds', '12-17 Year Olds', '18-29 Year Olds', '30-39 Year Olds','40-49 Year Olds','50-59 Year Olds','60-69 Year Olds','70-79 Year Olds', '80+ Year Olds']
 
     for gp in range(len(groups)):
-        view = view3[view3['Agegroup'] == groups[gp]]
+        view_age_view_gp = vax_age_view[vax_age_view['Agegroup'] == groups[gp]]
         df = pd.DataFrame(data={'Vaccination Status': ['Unvaccinated', 'Partially Vaccinated', 'Fully Vaccinated', 'Boosted'],\
-                             'Count': [view['Total population'].to_numpy()[0] - view['At least one dose_cumulative'].to_numpy()[0],
-                                        view['At least one dose_cumulative'].to_numpy()[0] - view['fully_vaccinated_cumulative'].to_numpy()[0],
-                                        view['fully_vaccinated_cumulative'].to_numpy()[0] - view['third_dose_cumulative'].to_numpy()[0],
-                                        view['third_dose_cumulative'].to_numpy()[0]]})
+                             'Count': [view_age_view_gp['Total population'].to_numpy()[0] - view_age_view_gp['At least one dose_cumulative'].to_numpy()[0],
+                                        view_age_view_gp['At least one dose_cumulative'].to_numpy()[0] - view_age_view_gp['fully_vaccinated_cumulative'].to_numpy()[0],
+                                        view_age_view_gp['fully_vaccinated_cumulative'].to_numpy()[0] - view_age_view_gp['third_dose_cumulative'].to_numpy()[0],
+                                        view_age_view_gp['third_dose_cumulative'].to_numpy()[0]]})
 
         pie_fig = px.pie(df, values='Count', names='Vaccination Status', color="Vaccination Status", title='Vaccination Status for '+ groupnm[gp], \
             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
@@ -168,7 +187,7 @@ def create_fig_dict (data_dict: dict):
 
     fig_dict['fig_hosp_area'] = fig_hosp_area
 
-    # Tests Area Charts
+    # Tests Line and Area Charts
     tests_area_view = data_dict['cases_tl'][data_dict['cases_tl']['Reported Date'] > now - pd.Timedelta(days=180)]
 
     tests_area_view_overall = pd.DataFrame(data={"Date": tests_area_view['Reported Date']}, columns=['Date'])
@@ -198,6 +217,7 @@ def create_fig_dict (data_dict: dict):
 
     fig_dict['tests_hosp_area'] = tests_hosp_area
 
+    # Maps
     fig_dict = create_maps(data_dict, fig_dict)
 
     return now, fig_dict

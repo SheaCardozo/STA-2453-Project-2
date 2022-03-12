@@ -92,8 +92,10 @@ cases_page = dbc.Container([
                 html.Hr(),
                 dcc.Graph(id='fig_cases_death_area',
                           figure=fig_dict['fig_cases_death_area']),
-            #    dcc.Graph(id='fig_death_area',
-            #              figure=fig_dict['fig_death_area']),
+                dbc.Row([
+                    dbc.Col(html.H2("COVID-19 Case Rates (Per 100k) by Vaccination Status"), width='auto'), 
+                    ], style={"margin-top": "32px"}),
+                html.Hr(),
                 dcc.Graph(id='fig_vax_ratio_time',
                           figure=fig_dict['fig_vax_ratio_time'])])
 
