@@ -149,7 +149,7 @@ vaccine_page = dbc.Container([
                 html.Hr(),
                 dbc.Row([
                     dbc.Col(change_card(data=data_dict['vax_stat'], col='per_partially', date_col='report_date', \
-                        title="Partially Vaccinated", color_invert=False, percentage=True), width='auto'), 
+                        title="At Least One Dose", color_invert=False, percentage=True), width='auto'), 
                     dbc.Col(change_card(data=data_dict['vax_stat'], col='per_fully', date_col='report_date', \
                         title="Fully Vaccinated", color_invert=False, percentage=True), width='auto'),
                     dbc.Col(change_card(data=data_dict['vax_stat'], col='per_boosted', date_col='report_date', \
