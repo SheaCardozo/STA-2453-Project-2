@@ -160,8 +160,7 @@ vaccine_page = dbc.Container([
                     ]),
                 html.Hr(),
                 dcc.Graph(id='fig_vax',
-                          figure=fig_dict['fig_vax'],
-                          config={"displayModeBar": False}),
+                          figure=fig_dict['fig_vax']),
                 dbc.Row([
                     dbc.Col(html.H2("COVID-19 Vaccination Rates by Age", style={"margin-top": "32px"}), width='auto'), 
                     ]),

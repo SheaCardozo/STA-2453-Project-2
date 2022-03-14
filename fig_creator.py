@@ -139,7 +139,7 @@ def create_fig_dict (data_dict: dict):
     boosted_area_view['Percentage'] = vax_stat['total_individuals_3doses'] / 14826276
     
 
-    fig_vax = px.area(pd.concat((part_area_view, fully_area_view, boosted_area_view)), x="Date", y="Percentage", color='Vaccination Status', \
+    fig_vax = px.area(pd.concat((boosted_area_view, fully_area_view, part_area_view)), x="Date", y="Percentage", color='Vaccination Status', \
             color_discrete_map={'Unvaccinated': px.colors.qualitative.Plotly[1],
                                  'Partially Vaccinated': px.colors.qualitative.Plotly[3],
                                  'Fully Vaccinated': px.colors.qualitative.Plotly[0],
