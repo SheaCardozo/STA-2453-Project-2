@@ -1,0 +1,8 @@
+dash
+dash-core-components
+dash-html-components
+numpy
+pandas
+geopandas
+plotly
+dash-bootstrap-components
