@@ -69,7 +69,7 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 cases_page = dbc.Container([
                 dbc.Row([
-                    dbc.Col(html.H2("COVID-19 Case Changes Today"), width='auto'), 
+                    dbc.Col(html.H2("COVID-19 Case Information Today"), width='auto'), 
                     ]),
                 html.Hr(),
                 dbc.Row([
@@ -148,7 +148,7 @@ tests_page = dbc.Container([
 
 vaccine_page = dbc.Container([
                 dbc.Row([
-                    dbc.Col(html.H2("COVID-19 Vaccination Changes Today"), width='auto'), 
+                    dbc.Col(html.H2("COVID-19 Vaccination Status Today"), width='auto'), 
                     ]),
                 html.Hr(),
                 dbc.Row([
@@ -178,7 +178,7 @@ vaccine_page = dbc.Container([
 
 hosp_page = dbc.Container([
                 dbc.Row([
-                    dbc.Col(html.H2("COVID-19 Hospital Admissions Today"), width='auto'), 
+                    dbc.Col(html.H2("COVID-19 Hospitalizations Today"), width='auto'), 
                     ]),
                 html.Hr(),
                 dbc.Row([
