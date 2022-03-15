@@ -9,6 +9,7 @@ from datetime import date
 from io import StringIO
 from urllib.request import urlopen
 
+# URLs to call API on
 key_dict = {
     "cases_tl": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=ed270bb8-340b-41f9-a7c6-e8ef587e6d11&limit=1000000",
     "cases_phu": "https://data.ontario.ca/api/3/action/datastore_search?resource_id=d1bfe1ad-6575-4352-8302-09ca81f7ddfc&limit=1000000",
@@ -21,7 +22,8 @@ key_dict = {
 
 def pull_data():
     '''
-    Function pulls data from Ontario Data Catalogue and reads misc data files
+    Function pulls data from Ontario Data Catalogue and/or stored files depending on last pull date
+    and returns data in the form of a dictionary
     '''
 
     now = date.today()
@@ -52,7 +54,8 @@ def pull_data():
 
 def pull_data_from_api():
     '''
-    Function pulls data from Ontario Data Catalogue API, returns None if failure.
+    Function pulls data from Ontario Data API and returns it in a dictionary,
+    or None if failure
     '''
 
     data_dict = {}
@@ -73,7 +76,7 @@ def pull_data_from_api():
 
 def pull_data_from_files():
     '''
-    Function pulls data from cached files.
+    Function pulls data from stored files and returns it in a dictionary
     '''
 
     data_dict = {}
@@ -85,7 +88,8 @@ def pull_data_from_files():
 
 def data_transforms (data_dict):
     '''
-    Function performs a variety of data transforms to DataFrames in the input dictionary, that are useful for downstream figure creation.
+    Function performs a variety of data transforms to DataFrames in the input dictionary, 
+    which are used for downstream figure creation
     '''
 
     data_dict['hosp_vax']['icu'] = data_dict['hosp_vax']['icu_unvac'] +\

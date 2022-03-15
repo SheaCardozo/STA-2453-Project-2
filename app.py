@@ -8,7 +8,7 @@ from data_handler import pull_data
 from fig_creator import create_fig_dict
 from utils import custom_strftime, change_card
 
-
+# CSS Style 
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -26,15 +26,18 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
+# App Settings
 app = Dash(external_stylesheets=[dbc.themes.SPACELAB], suppress_callback_exceptions=True)
 app.title = "Ontario COVID-19 Dashboard"
 
+# Create data and figure dictionaries for future processing
 data_dict = pull_data()
 assert data_dict is not None
 
 now, fig_dict = create_fig_dict(data_dict)
 assert fig_dict is not None
 
+# Sidebar html
 sidebar = html.Div(
     [
         html.H2("Ontario", style={"margin": "0px"}),
@@ -59,6 +62,7 @@ sidebar = html.Div(
 )
 
 
+# Create each page object - the callbacks will swap between them on user interaction
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
@@ -210,8 +214,13 @@ hosp_page = dbc.Container([
 
 
 
+# Callback to move between pages
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
+    """
+    This callback takes the 'pathname' property of the url, and renders 
+    the page content depending on what the value of 'pathname' is.
+    """
     if pathname == "/":
         return cases_page
     elif pathname == "/hospitalizations":
@@ -230,16 +239,15 @@ def render_page_content(pathname):
     )
 
 
-
+# These callbacks handle the count/rates tab changes on certain pages
 @app.callback(
     Output("tests-tab-content", "children"),
     Input("tests-tabs", "active_tab")
 )
-def render_tab_content(active_tab):
+def tests_render_tab_content(active_tab):
     """
-    This callback takes the 'active_tab' property as input, as well as the
-    stored graphs, and renders the tab content depending on what the value of
-    'active_tab' is.
+    This callback takes the 'active_tab' property as input, and renders 
+    the tab content depending on what the value of 'active_tab' is.
     """
 
     if active_tab is not None:
@@ -254,11 +262,10 @@ def render_tab_content(active_tab):
     Output("cases-tab-content", "children"),
     Input("cases-tabs", "active_tab")
 )
-def render_tab_content(active_tab):
+def cases_render_tab_content(active_tab):
     """
-    This callback takes the 'active_tab' property as input, as well as the
-    stored graphs, and renders the tab content depending on what the value of
-    'active_tab' is.
+    This callback takes the 'active_tab' property as input, and renders 
+    the tab content depending on what the value of 'active_tab' is.
     """
 
     if active_tab is not None:
@@ -268,5 +275,6 @@ def render_tab_content(active_tab):
 
     return "No tab selected"
 
+# Run app server
 if __name__ == '__main__':
     app.run_server(debug=False)

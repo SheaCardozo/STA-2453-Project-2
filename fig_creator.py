@@ -7,8 +7,9 @@ import plotly.graph_objects as go
 
 def create_fig_dict (data_dict: dict):
     '''
-    Creates dict of figs for use in Dash application
+    Creates dict of Plotly figures for use in Dash application
     '''
+
     fig_dict = {}
     now = pd.Timestamp.now()
 
@@ -36,10 +37,8 @@ def create_fig_dict (data_dict: dict):
         secondary_y=True,
     )
 
-    # Set x-axis title
     fig_cases_death_area.update_xaxes(title_text="Date")
 
-    # Set y-axes titles
     fig_cases_death_area.update_yaxes(title_text="Active Cases", secondary_y=False, rangemode="tozero")
     fig_cases_death_area.update_yaxes(title_text="New Deaths", secondary_y=True, rangemode="tozero", range=[0, max(death_area_view['Value'])*1.1])
 
@@ -217,13 +216,17 @@ def create_fig_dict (data_dict: dict):
 
     fig_dict['tests_hosp_area'] = tests_hosp_area
 
-    # Maps
+    # Create maps
     fig_dict = create_maps(data_dict, fig_dict)
 
     return now, fig_dict
 
 def create_maps (data_dict: dict, fig_dict: dict):
+    '''
+    Creates dict of Plotly choropleth map plots for use in Dash application
+    '''
 
+    # We create one dataframe connecting all the data to PHUs, before creating all the plots
     phu_cases = data_dict['cases_phu']
     phu_tests = data_dict['tests_phu']
 
@@ -246,6 +249,7 @@ def create_maps (data_dict: dict, fig_dict: dict):
 
     phu_map = phu_map.to_crs(epsg=4326)
 
+    # Cases Count + Rates
     map_cases_count = px.choropleth(phu_map, geojson=phu_map.geometry, 
                         locations="id", color="Active Cases", 
                         hover_data={'PHU':True, 'Active Cases':True, 'id':False},
@@ -281,6 +285,7 @@ def create_maps (data_dict: dict, fig_dict: dict):
         dragmode=False)
 
 
+    # Tests count + rates + positive test rate
     map_ont_test_count = px.choropleth(phu_map, geojson=phu_map.geometry, 
                         locations="id", color="Testing Volume", 
                         hover_data={'PHU':True, 'Testing Volume':True, 'id':False},
