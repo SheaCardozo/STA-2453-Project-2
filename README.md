@@ -4,5 +4,6 @@
 
 Installation Instructions: 
 1. Ensure you have a Python 3 environment that has the packages listed in requirements.txt 
-2. Run app.py to start the local server
+2. Run app.py to start the local server ('python app.py' should be sufficient)
 3. The dashboard should be accessible at http://127.0.0.1:8050/
+
