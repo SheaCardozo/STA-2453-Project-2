@@ -6,13 +6,18 @@ from dash import html
 import dash_bootstrap_components as dbc
 
 def suffix(d):
+    # Formats the day 'd' to have the proper date suffix
     return 'th' if 11<=d<=13 else {1:'st',2:'nd',3:'rd'}.get(d%10, 'th')
 
 def custom_strftime(format, t):
+    # Formats the date string for display
     return t.strftime(format).replace('{S}', str(t.day) + suffix(t.day))
 
 def change_card(data, col, date_col, title, color_invert=False, percentage=False):
-
+    '''
+    Creates the html objects for the daily update panels at the top of each page,
+    ensuring proper formatting of the figures and arrow sprite
+    '''
     locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
     data[date_col] = pd.to_datetime(data[date_col], format='%Y-%m-%d')
