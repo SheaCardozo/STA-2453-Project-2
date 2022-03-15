@@ -1,2 +1,3 @@
 # STA-2453-Project-2
-This is a repository to hold code related to the STA-2453 Dashboard Project.
+
+<img src="https://i.imgur.com/E5v5ZFw.png " data-canonical-src="https://i.imgur.com/E5v5ZFw.png " width="400" />
